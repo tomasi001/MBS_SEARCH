@@ -3,8 +3,8 @@ services:
     name: mbs-ai-assistant
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python start.py
+    buildCommand: poetry install --only=main
+    startCommand: poetry run python api/main.py
     envVars:
       - key: GEMINI_API_KEY
         sync: false
@@ -20,5 +20,5 @@ services:
         value: 0.0.0.0
       - key: API_PORT
         value: $PORT
-      - key: RENDER
-        value: true
+      - key: MBS_DB_PATH
+        value: mbs.db

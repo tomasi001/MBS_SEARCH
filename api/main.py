@@ -54,6 +54,31 @@ async def lifespan(app: FastAPI):
         # Initialize services
         gemini_service = GeminiService()
         vector_service = VectorService()
+
+        # Check if vector database needs population (production mode)
+        if os.getenv("RENDER"):
+            logger.info("Production mode: checking vector database")
+            stats = vector_service.get_db_stats()
+
+            if stats.get("total_documents", 0) == 0:
+                logger.info("Vector database is empty. Populating...")
+                import subprocess
+
+                result = subprocess.run(
+                    [sys.executable, "scripts/populate_mbs_data.py"],
+                    capture_output=True,
+                    text=True,
+                )
+
+                if result.returncode == 0:
+                    logger.info("Vector database populated successfully")
+                else:
+                    logger.error(f"Failed to populate vector database: {result.stderr}")
+            else:
+                logger.info(
+                    f"Vector database already has {stats['total_documents']} documents"
+                )
+
         nlp_service = NLPService()
 
         logger.info("App startup: all services initialized successfully")
