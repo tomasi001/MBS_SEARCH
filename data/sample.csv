@@ -1,0 +1,4 @@
+ItemNum,Category,Group,ScheduleFee,Description,DerivedFee,ItemStartDate,ItemEndDate,ProviderType,EMSNDescription
+"3","1","A1","20.05","Professional attendance at consulting rooms; other than a service to which item 23 applies.","The fee for item 3 plus .70 divided by the number of patients seen","2025-01-01","","general practitioner",""
+"23","1","A1","39.75","Professional attendance lasting at least 6 minutes and less than 20 minutes at consulting rooms; not on the same day as item 36.","","2025-01-01","","general practitioner",""
+"104","3","A3","92.00","Specialist attendance following referral of the patient to the specialist by a referring practitioner, at consulting rooms; other than a service to which item 106, 109, 125 or 16401 applies.","","2025-01-01","","specialist",""

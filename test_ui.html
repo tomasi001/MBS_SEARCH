@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MBS Test</title>
+  </head>
+  <body>
+    <h1>MBS Test</h1>
+    <form id="lookupForm">
+      <input id="codes" type="text" placeholder="e.g., 3" />
+      <button type="submit">Lookup</button>
+    </form>
+    <div id="result"></div>
+    <div id="notice"></div>
+    <div id="error"></div>
+
+    <script>
+      function textOrDash(val) {
+        return val === null || val === undefined || val === ""
+          ? "-"
+          : String(val);
+      }
+
+      function render(items) {
+        var out = [];
+        if (!items || items.length === 0) {
+          document.getElementById("result").innerHTML = "";
+          document.getElementById("notice").textContent =
+            "No items found for the provided codes.";
+          return;
+        }
+        document.getElementById("notice").textContent = "";
+        for (var i = 0; i < items.length; i++) {
+          var it = items[i];
+          out.push(
+            '<div class="item" data-item-code="' + it.item.item_num + '">'
+          );
+          out.push('<div class="item-header">');
+          out.push("<h2>Item " + it.item.item_num + "</h2>");
+          out.push(
+            '<button class="remove-btn" onclick="removeItem(\'' +
+              it.item.item_num +
+              '\')" title="Remove this item">×</button>'
+          );
+          out.push("</div>");
+          out.push(
+            '<div><span class="k">Category:</span> <span class="v">' +
+              textOrDash(it.item.category) +
+              '</span> &nbsp; <span class="k">Group:</span> <span class="v">' +
+              textOrDash(it.item.group_code) +
+              '</span> &nbsp; <span class="k">Fee:</span> <span class="v">' +
+              textOrDash(it.item.schedule_fee) +
+              "</span></div>"
+          );
+          var desc = (it.item.description || "").replace(/\n/g, "<br/>");
+          out.push(
+            '<div style="margin-top:8px"><span class="k">Description:</span><br/><div class="v">' +
+              desc +
+              "</div></div>"
+          );
+          out.push("</div>");
+        }
+        document.getElementById("result").innerHTML = out.join("");
+      }
+
+      function removeItem(itemCode) {
+        var itemElement = document.querySelector(
+          '[data-item-code="' + itemCode + '"]'
+        );
+        if (itemElement) {
+          itemElement.remove();
+        }
+      }
+
+      function performSearch(codes) {
+        document.getElementById("error").textContent = "";
+        document.getElementById("notice").textContent = "";
+
+        fetch("/api/items?codes=" + encodeURIComponent(codes.join(",")))
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(function (data) {
+            console.log("API Response:", data);
+            render(data.items || []);
+          })
+          .catch(function (err) {
+            console.error("Error:", err);
+            document.getElementById("error").textContent =
+              "Lookup failed: " + err.message;
+          });
+      }
+
+      document
+        .getElementById("lookupForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+          var el = document.getElementById("codes");
+          var raw = el.value || "";
+          var cleaned = raw.replace(/\s+/g, "");
+          var codes = cleaned.split(",").filter(function (x) {
+            return x && x.length;
+          });
+          if (!codes.length) {
+            document.getElementById("error").textContent =
+              "Please enter one or more codes.";
+            return;
+          }
+          console.log("Searching for codes:", codes);
+          performSearch(codes);
+        });
+    </script>
+  </body>
+</html>
