@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: mbs-ai-assistant
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python start.py
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: USE_LOCAL_EMBEDDINGS
+        value: true
+      - key: LOCAL_EMBEDDING_MODEL
+        value: sentence-transformers/all-MiniLM-L6-v2
+      - key: CHROMA_PERSIST_DIRECTORY
+        value: ./chroma_db
+      - key: DEBUG
+        value: false
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PORT
+        value: $PORT
+      - key: RENDER
+        value: true

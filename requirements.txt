@@ -1,0 +1,11 @@
+fastapi==0.115.14
+uvicorn[standard]==0.35.0
+lxml==5.2.2
+pydantic==2.11.7
+python-dotenv==1.0.1
+pandas==2.2.2
+google-generativeai==1.28.0
+chromadb==1.0.15
+python-multipart==0.0.9
+pydantic-settings==2.10.1
+sentence-transformers==2.7.0
