@@ -76,7 +76,9 @@ async def lifespan(app: FastAPI):
 
     except Exception as e:
         logger.error(f"App startup: failed to initialize services: {e}")
-        logger.error(f"Service status - Gemini: {gemini_service is not None}, Vector: {vector_service is not None}, NLP: {nlp_service is not None}")
+        logger.error(
+            f"Service status - Gemini: {gemini_service is not None}, Vector: {vector_service is not None}, NLP: {nlp_service is not None}"
+        )
         # Continue startup even if services fail
 
     yield
