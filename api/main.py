@@ -48,38 +48,8 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     global gemini_service, vector_service, nlp_service
 
-    logger.info("App startup: initializing services")
-
-    try:
-        # Initialize Gemini service
-        logger.info("Initializing Gemini service...")
-        gemini_service = GeminiService()
-        logger.info("Gemini service initialized successfully")
-
-        # Initialize Vector service
-        logger.info("Initializing Vector service...")
-        vector_service = VectorService()
-        logger.info("Vector service initialized successfully")
-
-        # Skip vector DB population during startup for faster deployment
-        # Vector DB will be populated on first use if needed
-        logger.info(
-            "Skipping vector DB population during startup for faster deployment"
-        )
-
-        # Initialize NLP service
-        logger.info("Initializing NLP service...")
-        nlp_service = NLPService()
-        logger.info("NLP service initialized successfully")
-
-        logger.info("App startup: all services initialized successfully")
-
-    except Exception as e:
-        logger.error(f"App startup: failed to initialize services: {e}")
-        logger.error(
-            f"Service status - Gemini: {gemini_service is not None}, Vector: {vector_service is not None}, NLP: {nlp_service is not None}"
-        )
-        # Continue startup even if services fail
+    logger.info("App startup: skipping service initialization for faster startup")
+    logger.info("Services will be initialized on-demand when first accessed")
 
     yield
 
@@ -121,6 +91,12 @@ async def log_requests(request: Request, call_next):
 async def index():
     """Serve the dual-panel MBS AI Assistant UI."""
     return HTMLResponse(ENHANCED_CHAT_UI)
+
+
+@app.get("/health")
+async def health_check():
+    """Simple health check endpoint for Render."""
+    return {"status": "healthy", "message": "MBS AI Assistant is running"}
 
 
 @app.get("/api/ai/status", response_model=AIStatusResponse)
@@ -167,6 +143,7 @@ async def get_ai_status():
                 vector_db_stats = vector_service.get_collection_stats()
             except Exception as e:
                 logger.warning(f"Could not get vector DB stats: {e}")
+                vector_db_stats = {"error": str(e)}
 
         return AIStatusResponse(
             ai_enabled=ai_enabled,
