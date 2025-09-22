@@ -55,29 +55,9 @@ async def lifespan(app: FastAPI):
         gemini_service = GeminiService()
         vector_service = VectorService()
 
-        # Check if vector database needs population (production mode)
-        if os.getenv("RENDER"):
-            logger.info("Production mode: checking vector database")
-            stats = vector_service.get_db_stats()
-
-            if stats.get("total_documents", 0) == 0:
-                logger.info("Vector database is empty. Populating...")
-                import subprocess
-
-                result = subprocess.run(
-                    [sys.executable, "scripts/populate_mbs_data.py"],
-                    capture_output=True,
-                    text=True,
-                )
-
-                if result.returncode == 0:
-                    logger.info("Vector database populated successfully")
-                else:
-                    logger.error(f"Failed to populate vector database: {result.stderr}")
-            else:
-                logger.info(
-                    f"Vector database already has {stats['total_documents']} documents"
-                )
+        # Skip vector DB population during startup for faster deployment
+        # Vector DB will be populated on first use if needed
+        logger.info("Skipping vector DB population during startup for faster deployment")
 
         nlp_service = NLPService()
 
@@ -313,6 +293,10 @@ if __name__ == "__main__":
     # Use PORT environment variable for Render compatibility
     port = int(os.getenv("PORT", settings.API_PORT))
     host = "0.0.0.0"  # Required for Render
+    
+    logger.info(f"Starting server on {host}:{port}")
+    logger.info(f"PORT environment variable: {os.getenv('PORT')}")
+    logger.info(f"DEBUG mode: {settings.DEBUG}")
 
     uvicorn.run(
         "api.main:app",
