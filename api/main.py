@@ -290,18 +290,12 @@ async def get_items(codes: str):
 
 
 if __name__ == "__main__":
-    # Use PORT environment variable for Render compatibility
-    port = int(os.getenv("PORT", settings.API_PORT))
+    # Use PORT environment variable for Render compatibility - EXACTLY as per Render docs
+    port = int(os.environ.get("PORT", 8000))  # Use Render's PORT or default to 8000 locally
     host = "0.0.0.0"  # Required for Render
     
     logger.info(f"Starting server on {host}:{port}")
-    logger.info(f"PORT environment variable: {os.getenv('PORT')}")
+    logger.info(f"PORT environment variable: {os.environ.get('PORT')}")
     logger.info(f"DEBUG mode: {settings.DEBUG}")
 
-    uvicorn.run(
-        "api.main:app",
-        host=host,
-        port=port,
-        log_level="info",
-        reload=settings.DEBUG,
-    )
+    uvicorn.run(app, host=host, port=port, log_level="info")
