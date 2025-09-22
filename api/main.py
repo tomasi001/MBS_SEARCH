@@ -51,9 +51,15 @@ async def lifespan(app: FastAPI):
     logger.info("App startup: initializing services")
 
     try:
-        # Initialize services
+        # Initialize Gemini service
+        logger.info("Initializing Gemini service...")
         gemini_service = GeminiService()
+        logger.info("Gemini service initialized successfully")
+
+        # Initialize Vector service
+        logger.info("Initializing Vector service...")
         vector_service = VectorService()
+        logger.info("Vector service initialized successfully")
 
         # Skip vector DB population during startup for faster deployment
         # Vector DB will be populated on first use if needed
@@ -61,12 +67,16 @@ async def lifespan(app: FastAPI):
             "Skipping vector DB population during startup for faster deployment"
         )
 
+        # Initialize NLP service
+        logger.info("Initializing NLP service...")
         nlp_service = NLPService()
+        logger.info("NLP service initialized successfully")
 
         logger.info("App startup: all services initialized successfully")
 
     except Exception as e:
         logger.error(f"App startup: failed to initialize services: {e}")
+        logger.error(f"Service status - Gemini: {gemini_service is not None}, Vector: {vector_service is not None}, NLP: {nlp_service is not None}")
         # Continue startup even if services fail
 
     yield
@@ -116,6 +126,31 @@ async def get_ai_status():
     """Get AI service status and capabilities."""
     try:
         global gemini_service, vector_service, nlp_service
+
+        # Try to initialize services if they failed during startup
+        if not gemini_service:
+            try:
+                logger.info("Attempting to initialize Gemini service on-demand...")
+                gemini_service = GeminiService()
+                logger.info("Gemini service initialized successfully on-demand")
+            except Exception as e:
+                logger.error(f"Failed to initialize Gemini service on-demand: {e}")
+
+        if not vector_service:
+            try:
+                logger.info("Attempting to initialize Vector service on-demand...")
+                vector_service = VectorService()
+                logger.info("Vector service initialized successfully on-demand")
+            except Exception as e:
+                logger.error(f"Failed to initialize Vector service on-demand: {e}")
+
+        if not nlp_service and gemini_service and vector_service:
+            try:
+                logger.info("Attempting to initialize NLP service on-demand...")
+                nlp_service = NLPService()
+                logger.info("NLP service initialized successfully on-demand")
+            except Exception as e:
+                logger.error(f"Failed to initialize NLP service on-demand: {e}")
 
         # Check service availability
         ai_enabled = all([gemini_service, vector_service, nlp_service])
