@@ -4,7 +4,7 @@ Configuration settings for MBS AI Assistant MVP using Gemini.
 
 import os
 from typing import Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -44,6 +44,16 @@ class Settings(BaseSettings):
 
     # Database Configuration
     MBS_DB_PATH: str = Field("mbs.db", description="Path to MBS SQLite database")
+
+    @field_validator("API_PORT", mode="before")
+    @classmethod
+    def validate_api_port(cls, v):
+        """Handle PORT environment variable from Render."""
+        if isinstance(v, str) and v.startswith("$"):
+            # Handle environment variable references like $PORT
+            port_value = os.getenv(v[1:], "8000")
+            return int(port_value)
+        return int(v)
 
     class Config:
         env_file = ".env"
