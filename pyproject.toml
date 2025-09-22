@@ -10,19 +10,17 @@ packages = [
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-fastapi = "^0.112.2"
-uvicorn = {version = "^0.30.1", extras = ["standard"]}
-lxml = "^5.2.2"
-pydantic = "^2.8.2"
-python-dotenv = "^1.0.1"
-pandas = "^2.2.2"
 # AI/ML dependencies - Gemini implementation
-google-generativeai = "^0.8.3"
-chromadb = "^0.4.22"
-python-multipart = "^0.0.9"
+fastapi = "^0.117.1"
+uvicorn = {extras = ["standard"], version = "^0.36.0"}
+gunicorn = "^23.0.0"
+lxml = "^6.0.1"
 pydantic-settings = "^2.10.1"
-sentence-transformers = "^2.7.0"
-hnswlib = ">=0.7.0,<0.9.0"
+python-multipart = "^0.0.20"
+pandas = "^2.3.2"
+google-generativeai = "^0.8.5"
+chromadb = "^1.1.0"
+sentence-transformers = "^5.1.0"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.5.5"
