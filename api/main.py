@@ -310,10 +310,14 @@ async def get_items(codes: str):
 
 
 if __name__ == "__main__":
+    # Use PORT environment variable for Render compatibility
+    port = int(os.getenv("PORT", settings.API_PORT))
+    host = "0.0.0.0"  # Required for Render
+
     uvicorn.run(
         "api.main:app",
-        host=settings.API_HOST,
-        port=settings.API_PORT,
+        host=host,
+        port=port,
         log_level="info",
         reload=settings.DEBUG,
     )
