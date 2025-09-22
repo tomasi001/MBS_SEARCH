@@ -48,8 +48,38 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     global gemini_service, vector_service, nlp_service
 
-    logger.info("App startup: skipping service initialization for faster startup")
-    logger.info("Services will be initialized on-demand when first accessed")
+    logger.info("App startup: initializing services")
+
+    try:
+        # Initialize Gemini service
+        logger.info("Initializing Gemini service...")
+        gemini_service = GeminiService()
+        logger.info("Gemini service initialized successfully")
+
+        # Initialize Vector service
+        logger.info("Initializing Vector service...")
+        vector_service = VectorService()
+        logger.info("Vector service initialized successfully")
+
+        # Skip vector DB population during startup for faster deployment
+        # Vector DB will be populated on first use if needed
+        logger.info(
+            "Skipping vector DB population during startup for faster deployment"
+        )
+
+        # Initialize NLP service
+        logger.info("Initializing NLP service...")
+        nlp_service = NLPService()
+        logger.info("NLP service initialized successfully")
+
+        logger.info("App startup: all services initialized successfully")
+
+    except Exception as e:
+        logger.error(f"App startup: failed to initialize services: {e}")
+        logger.error(
+            f"Service status - Gemini: {gemini_service is not None}, Vector: {vector_service is not None}, NLP: {nlp_service is not None}"
+        )
+        # Continue startup even if services fail
 
     yield
 
