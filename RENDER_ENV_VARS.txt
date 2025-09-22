@@ -1,0 +1,10 @@
+# Render Environment Variables
+# Copy these into your Render Environment Variables section
+
+GEMINI_API_KEY=your_actual_gemini_api_key_here
+USE_LOCAL_EMBEDDINGS=true
+LOCAL_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+CHROMA_PERSIST_DIRECTORY=./chroma_db
+DEBUG=false
+API_HOST=0.0.0.0
+MBS_DB_PATH=mbs.db
