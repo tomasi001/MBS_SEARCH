@@ -41,18 +41,8 @@ class VectorService:
 
         # Initialize local embedding model if available and configured
         self.local_embedding_model = None
-        if settings.USE_LOCAL_EMBEDDINGS and SENTENCE_TRANSFORMERS_AVAILABLE:
-            try:
-                self.local_embedding_model = SentenceTransformer(
-                    settings.LOCAL_EMBEDDING_MODEL
-                )
-                logger.info(
-                    f"Local embedding model loaded: {settings.LOCAL_EMBEDDING_MODEL}"
-                )
-            except Exception as e:
-                logger.warning(f"Failed to load local embedding model: {e}")
-                self.local_embedding_model = None
-
+        self._model_loaded = False
+        
         # Initialize ChromaDB client
         self.client = chromadb.PersistentClient(
             path=self.persist_directory,
@@ -73,7 +63,24 @@ class VectorService:
             )
             logger.info(f"Created new collection: {self.collection_name}")
 
-        logger.info("Vector service initialized successfully")
+        logger.info("Vector service initialized successfully (model loading deferred)")
+
+    def _ensure_model_loaded(self):
+        """Load the embedding model if not already loaded."""
+        if self._model_loaded:
+            return
+            
+        if settings.USE_LOCAL_EMBEDDINGS and SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                logger.info("Loading embedding model on first use...")
+                self.local_embedding_model = SentenceTransformer(
+                    settings.LOCAL_EMBEDDING_MODEL
+                )
+                logger.info(f"Local embedding model loaded: {settings.LOCAL_EMBEDDING_MODEL}")
+                self._model_loaded = True
+            except Exception as e:
+                logger.warning(f"Failed to load local embedding model: {e}")
+                self.local_embedding_model = None
 
     def add_documents(self, documents: List[Dict[str, Any]]) -> bool:
         """Add documents to the vector database."""
@@ -98,6 +105,10 @@ class VectorService:
             # Generate embeddings using Gemini or local model
             logger.info(f"Generating embeddings for {len(texts)} documents...")
 
+            # Ensure model is loaded if using local embeddings
+            if settings.USE_LOCAL_EMBEDDINGS:
+                self._ensure_model_loaded()
+                
             if self.local_embedding_model:
                 try:
                     embeddings = self.local_embedding_model.encode(texts)
@@ -137,6 +148,10 @@ class VectorService:
         try:
             logger.info(f"Searching vector database: '{query}'")
 
+            # Ensure model is loaded if using local embeddings
+            if settings.USE_LOCAL_EMBEDDINGS:
+                self._ensure_model_loaded()
+                
             # Generate query embedding using Gemini or local model
             if self.local_embedding_model:
                 try:

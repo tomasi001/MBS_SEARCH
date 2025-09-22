@@ -3,8 +3,8 @@ services:
     name: mbs-ai-assistant
     env: python
     plan: free
-    buildCommand: poetry install --only=main
-    startCommand: poetry run python api/main.py
+    buildCommand: poetry install --only=main --no-dev
+    startCommand: poetry run python simple_start.py
     envVars:
       - key: GEMINI_API_KEY
         sync: false
