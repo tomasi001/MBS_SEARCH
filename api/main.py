@@ -57,7 +57,9 @@ async def lifespan(app: FastAPI):
 
         # Skip vector DB population during startup for faster deployment
         # Vector DB will be populated on first use if needed
-        logger.info("Skipping vector DB population during startup for faster deployment")
+        logger.info(
+            "Skipping vector DB population during startup for faster deployment"
+        )
 
         nlp_service = NLPService()
 
@@ -291,9 +293,11 @@ async def get_items(codes: str):
 
 if __name__ == "__main__":
     # Use PORT environment variable for Render compatibility - EXACTLY as per Render docs
-    port = int(os.environ.get("PORT", 8000))  # Use Render's PORT or default to 8000 locally
+    port = int(
+        os.environ.get("PORT", 8000)
+    )  # Use Render's PORT or default to 8000 locally
     host = "0.0.0.0"  # Required for Render
-    
+
     logger.info(f"Starting server on {host}:{port}")
     logger.info(f"PORT environment variable: {os.environ.get('PORT')}")
     logger.info(f"DEBUG mode: {settings.DEBUG}")
