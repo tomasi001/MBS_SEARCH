@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mbs-ai-server
+    env: python
+    plan: free
+    buildCommand: poetry install --only=main
+    startCommand: poetry run python production/ai_server.py
+    healthCheckPath: /health
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: VECTOR_SERVER_URL
+        value: "https://mbs-vector-server.onrender.com"
+      - key: FRONTEND_SERVER_URL
+        value: "https://mbs-frontend-server.onrender.com"
+      - key: DEBUG
+        value: "false"

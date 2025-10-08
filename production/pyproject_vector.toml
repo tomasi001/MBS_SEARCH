@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "mbs-clarity-vector"
+version = "0.1.0"
+description = "MBS Clarity Vector Server - ChromaDB and semantic search"
+authors = ["Thomas Shields <you@example.com>"]
+readme = "README.md"
+packages = [
+  { include = "mbs_clarity", from = "src" }
+]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+# Web framework
+fastapi = "^0.117.1"
+uvicorn = {extras = ["standard"], version = "^0.36.0"}
+gunicorn = "^23.0.0"
+# Vector database and embeddings
+chromadb = "^1.1.0"
+sentence-transformers = "^5.1.0"
+# Configuration
+pydantic-settings = "^2.10.1"
+python-multipart = "^0.0.20"
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.5.5"
+black = "^24.8.0"
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
