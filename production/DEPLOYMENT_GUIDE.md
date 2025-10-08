@@ -18,7 +18,7 @@ The system is split into three microservices:
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_vector.toml pyproject.toml && poetry install --only=main`
    - **Start Command**: `poetry run python production/vector_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
@@ -29,13 +29,15 @@ The system is split into three microservices:
 
 4. Wait for deployment to complete and note the URL (e.g., `https://mbs-vector-server.onrender.com`)
 
+**Dependencies**: ChromaDB, sentence-transformers, FastAPI (~500MB+ download)
+
 ### Step 2: Deploy AI Server
 
 1. Create a new Render web service
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_ai.toml pyproject.toml && poetry install --only=main`
    - **Start Command**: `poetry run python production/ai_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
@@ -46,13 +48,15 @@ The system is split into three microservices:
 
 4. Wait for deployment to complete and note the URL (e.g., `https://mbs-ai-server.onrender.com`)
 
+**Dependencies**: Google Generative AI, FastAPI, httpx (~50MB download)
+
 ### Step 3: Deploy Frontend Server
 
 1. Create a new Render web service
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_frontend.toml pyproject.toml && poetry install --only=main`
    - **Start Command**: `poetry run python production/frontend_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
@@ -62,6 +66,22 @@ The system is split into three microservices:
      - `DEBUG=false`
 
 4. Wait for deployment to complete and note the URL (e.g., `https://mbs-frontend-server.onrender.com`)
+
+**Dependencies**: FastAPI, httpx, pandas, lxml (~30MB download)
+
+## Dependency Optimization
+
+This deployment strategy is highly optimized for free tier constraints:
+
+- **Vector Server**: Only installs ChromaDB and sentence-transformers (heaviest dependencies)
+- **AI Server**: Only installs Google Generative AI and basic web framework
+- **Frontend Server**: Only installs web framework and data processing libraries
+
+**Total Download Reduction**: Instead of downloading ~500MB+ on each server, we now download:
+
+- Vector Server: ~500MB (only where needed)
+- AI Server: ~50MB (90% reduction)
+- Frontend Server: ~30MB (94% reduction)
 
 ## Testing the Deployment
 

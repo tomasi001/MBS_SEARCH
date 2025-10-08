@@ -14,7 +14,7 @@ python = ">=3.11,<3.13"
 fastapi = "^0.117.1"
 uvicorn = {extras = ["standard"], version = "^0.36.0"}
 gunicorn = "^23.0.0"
-# Vector database and embeddings
+# Vector database and embeddings - HEAVY DEPENDENCIES
 chromadb = "^1.1.0"
 sentence-transformers = "^5.1.0"
 # Configuration

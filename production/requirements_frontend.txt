@@ -1,0 +1,9 @@
+# Frontend Server Dependencies - Lightweight
+fastapi==0.117.1
+uvicorn[standard]==0.36.0
+gunicorn==23.0.0
+httpx==0.27.2
+pandas==2.3.2
+lxml==6.0.1
+pydantic-settings==2.10.1
+python-multipart==0.0.20
