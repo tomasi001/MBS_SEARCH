@@ -92,7 +92,7 @@ async def health_check():
     }
 
 
-def _validate_mbs_query(self, query: str) -> Dict[str, Any]:
+def _validate_mbs_query(query: str) -> Dict[str, Any]:
     """Validate that the query is related to MBS codes and medical procedures."""
     query_lower = query.lower()
 
