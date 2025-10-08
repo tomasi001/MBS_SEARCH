@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: mbs-frontend-server
+    env: python
+    plan: free
+    rootDir: production/
+    buildCommand: cp pyproject_frontend.toml pyproject.toml && poetry install --only=main
+    startCommand: poetry run python frontend_server.py
+    healthCheckPath: /health
+    buildFilters:
+      includedPaths:
+        - frontend_server.py
+        - pyproject_frontend.toml
+        - ../config.py
+        - ../templates/
+        - ../src/
+        - ../mbs.db
+      ignoredPaths:
+        - "*"
+    envVars:
+      - key: AI_SERVER_URL
+        value: "https://mbs-ai-server.onrender.com"
+      - key: VECTOR_SERVER_URL
+        value: "https://mbs-vector-server.onrender.com"
+      - key: MBS_DB_PATH
+        value: "mbs.db"
+      - key: DEBUG
+        value: "false"

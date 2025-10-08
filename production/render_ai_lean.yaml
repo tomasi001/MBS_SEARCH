@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: mbs-ai-server
+    env: python
+    plan: free
+    rootDir: production/
+    buildCommand: cp pyproject_ai.toml pyproject.toml && poetry install --only=main
+    startCommand: poetry run python ai_server.py
+    healthCheckPath: /health
+    buildFilters:
+      includedPaths:
+        - ai_server.py
+        - pyproject_ai.toml
+        - ../config.py
+        - ../services/gemini_service.py
+      ignoredPaths:
+        - "*"
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: VECTOR_SERVER_URL
+        value: "https://mbs-vector-server.onrender.com"
+      - key: FRONTEND_SERVER_URL
+        value: "https://mbs-frontend-server.onrender.com"
+      - key: DEBUG
+        value: "false"
