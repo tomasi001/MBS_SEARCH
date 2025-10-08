@@ -39,3 +39,5 @@ poetry install --no-root
 
 # Start the vector server
 poetry run python production/vector_server.py
+
+

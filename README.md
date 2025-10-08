@@ -1895,7 +1895,7 @@ poetry run python -m memory_profiler src/mbs_clarity/_loader.py
 
 ```bash
 # Install production dependencies only
-poetry install --only=main
+poetry install --only=main --no-root
 
 # Build application
 poetry build
@@ -1921,7 +1921,7 @@ COPY api/ ./api/
 COPY data/ ./data/
 
 # Install dependencies
-RUN poetry install --only=main
+RUN poetry install --only=main --no-root
 
 # Expose port
 EXPOSE 8000

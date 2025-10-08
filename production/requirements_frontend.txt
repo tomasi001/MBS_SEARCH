@@ -7,3 +7,5 @@ pandas==2.3.2
 lxml==6.0.1
 pydantic-settings==2.10.1
 python-multipart==0.0.20
+
+

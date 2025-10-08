@@ -16,7 +16,7 @@
 
 4. **Configure**:
 
-   - Build Command: `poetry install --only=main`
+   - Build Command: `poetry install --only=main --no-root`
    - Start Command: `poetry run python api/main.py`
 
 5. **Environment Variables**:

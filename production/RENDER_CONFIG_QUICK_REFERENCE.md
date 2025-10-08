@@ -9,7 +9,7 @@
 **Build Command**:
 
 ```bash
-poetry install --only=main
+poetry install --only=main --no-root
 ```
 
 **Start Command**:
@@ -38,7 +38,7 @@ poetry run python production/vector_server.py
 **Build Command**:
 
 ```bash
-poetry install --only=main
+poetry install --only=main --no-root
 ```
 
 **Start Command**:
@@ -67,7 +67,7 @@ poetry run python production/ai_server.py
 **Build Command**:
 
 ```bash
-poetry install --only=main
+poetry install --only=main --no-root
 ```
 
 **Start Command**:

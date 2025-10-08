@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "mbs-clarity-vector-gemini"
+version = "0.1.0"
+description = "MBS Clarity Vector Server - Using Gemini embeddings for free tier"
+authors = ["Thomas Shields <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.13"
+# Web framework
+fastapi = "^0.117.1"
+uvicorn = {extras = ["standard"], version = "^0.36.0"}
+gunicorn = "^23.0.0"
+# Gemini API for embeddings
+google-generativeai = "^0.8.5"
+# ChromaDB (lite version without heavy ML dependencies)
+chromadb = {version = "^1.1.0", extras = ["lite"]}
+# Scientific computing for embeddings
+numpy = "^1.24.0"
+# Configuration
+pydantic-settings = "^2.10.1"
+python-multipart = "^0.0.20"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+

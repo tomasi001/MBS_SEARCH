@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     rootDir: production/
-    buildCommand: cp pyproject_vector.toml pyproject.toml && poetry install --only=main
+    buildCommand: cp pyproject_vector.toml pyproject.toml && poetry install --only=main --no-root
     startCommand: poetry run python vector_server.py
     healthCheckPath: /health
     buildFilters:
@@ -23,3 +23,5 @@ services:
         value: "./chroma_db"
       - key: DEBUG
         value: "false"
+
+

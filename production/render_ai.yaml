@@ -3,7 +3,7 @@ services:
     name: mbs-ai-server
     env: python
     plan: free
-    buildCommand: poetry install --only=main
+    buildCommand: poetry install --only=main --no-root
     startCommand: poetry run python production/ai_server.py
     healthCheckPath: /health
     envVars:
@@ -15,3 +15,5 @@ services:
         value: "https://mbs-frontend-server.onrender.com"
       - key: DEBUG
         value: "false"
+
+

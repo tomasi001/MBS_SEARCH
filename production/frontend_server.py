@@ -249,3 +249,5 @@ if __name__ == "__main__":
     logger.info(f"Vector Server URL: {VECTOR_SERVER_URL}")
 
     uvicorn.run(app, host=host, port=port, log_level="info")
+
+

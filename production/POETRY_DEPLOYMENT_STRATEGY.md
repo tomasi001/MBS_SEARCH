@@ -29,7 +29,7 @@ Since your current `pyproject.toml` already has all dependencies, we can use it 
 
 ```bash
 # All servers use the same build command
-Build Command: poetry install --only=main
+Build Command: poetry install --only=main --no-root
 Start Command: poetry run python production/[server_name].py
 ```
 
@@ -50,15 +50,15 @@ Create separate Poetry projects for each server:
 
 ```bash
 # Vector Server
-Build Command: cd production && poetry install --only=main -f pyproject_vector.toml
+Build Command: cd production && poetry install --only=main --no-root -f pyproject_vector.toml
 Start Command: cd production && poetry run python vector_server.py
 
 # AI Server
-Build Command: cd production && poetry install --only=main -f pyproject_ai.toml
+Build Command: cd production && poetry install --only=main --no-root -f pyproject_ai.toml
 Start Command: cd production && poetry run python ai_server.py
 
 # Frontend Server
-Build Command: cd production && poetry install --only=main -f pyproject_frontend.toml
+Build Command: cd production && poetry install --only=main --no-root -f pyproject_frontend.toml
 Start Command: cd production && poetry run python frontend_server.py
 ```
 
@@ -94,7 +94,7 @@ The optimization comes from:
 ### **All Servers (Recommended)**
 
 ```bash
-Build Command: poetry install --only=main
+Build Command: poetry install --only=main --no-root
 Start Command: poetry run python production/[server_name].py
 ```
 

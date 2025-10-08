@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     rootDir: production/
-    buildCommand: cp pyproject_frontend.toml pyproject.toml && poetry install --only=main
+    buildCommand: cp pyproject_frontend.toml pyproject.toml && poetry install --only=main --no-root
     startCommand: poetry run python frontend_server.py
     healthCheckPath: /health
     buildFilters:
@@ -26,3 +26,5 @@ services:
         value: "mbs.db"
       - key: DEBUG
         value: "false"
+
+

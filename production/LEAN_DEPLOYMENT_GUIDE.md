@@ -22,8 +22,8 @@ This guide uses Render's **Root Directory** and **Build Filters** to deploy only
 **Render Configuration**:
 
 - **Root Directory**: `production/`
-- **Build Command**: `cp pyproject_vector.toml pyproject.toml && poetry install --only=main`
-- **Start Command**: `poetry run python vector_server.py`
+- **Build Command**: `cp pyproject_vector_gemini.toml pyproject.toml && poetry install --only=main --no-root`
+- **Start Command**: `poetry run python vector_server_gemini.py`
 - **Health Check Path**: `/health`
 
 **Build Filters**:
@@ -56,7 +56,7 @@ This guide uses Render's **Root Directory** and **Build Filters** to deploy only
 **Render Configuration**:
 
 - **Root Directory**: `production/`
-- **Build Command**: `cp pyproject_ai.toml pyproject.toml && poetry install --only=main`
+- **Build Command**: `cp pyproject_ai.toml pyproject.toml && poetry install --only=main --no-root`
 - **Start Command**: `poetry run python ai_server.py`
 - **Health Check Path**: `/health`
 
@@ -92,7 +92,7 @@ This guide uses Render's **Root Directory** and **Build Filters** to deploy only
 **Render Configuration**:
 
 - **Root Directory**: `production/`
-- **Build Command**: `cp pyproject_frontend.toml pyproject.toml && poetry install --only=main`
+- **Build Command**: `cp pyproject_frontend.toml pyproject.toml && poetry install --only=main --no-root`
 - **Start Command**: `poetry run python frontend_server.py`
 - **Health Check Path**: `/health`
 
@@ -132,7 +132,7 @@ Since `render.yaml` files aren't automatically applied, configure each service m
 1. Create new Render web service
 2. Connect to GitHub repository
 3. Set **Root Directory** to `production/`
-4. Set **Build Command** to `cp pyproject_vector.toml pyproject.toml && poetry install --only=main`
+4. Set **Build Command** to `cp pyproject_vector.toml pyproject.toml && poetry install --only=main --no-root`
 5. Set **Start Command** to `poetry run python vector_server.py`
 6. Set **Health Check Path** to `/health`
 7. Configure **Build Filters**:
@@ -145,7 +145,7 @@ Since `render.yaml` files aren't automatically applied, configure each service m
 1. Create new Render web service
 2. Connect to GitHub repository
 3. Set **Root Directory** to `production/`
-4. Set **Build Command** to `cp pyproject_ai.toml pyproject.toml && poetry install --only=main`
+4. Set **Build Command** to `cp pyproject_ai.toml pyproject.toml && poetry install --only=main --no-root`
 5. Set **Start Command** to `poetry run python ai_server.py`
 6. Set **Health Check Path** to `/health`
 7. Configure **Build Filters**:
@@ -158,7 +158,7 @@ Since `render.yaml` files aren't automatically applied, configure each service m
 1. Create new Render web service
 2. Connect to GitHub repository
 3. Set **Root Directory** to `production/`
-4. Set **Build Command** to `cp pyproject_frontend.toml pyproject.toml && poetry install --only=main`
+4. Set **Build Command** to `cp pyproject_frontend.toml pyproject.toml && poetry install --only=main --no-root`
 5. Set **Start Command** to `poetry run python frontend_server.py`
 6. Set **Health Check Path** to `/health`
 7. Configure **Build Filters**:

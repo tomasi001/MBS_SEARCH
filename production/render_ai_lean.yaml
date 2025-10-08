@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     rootDir: production/
-    buildCommand: cp pyproject_ai.toml pyproject.toml && poetry install --only=main
+    buildCommand: cp pyproject_ai.toml pyproject.toml && poetry install --only=main --no-root
     startCommand: poetry run python ai_server.py
     healthCheckPath: /health
     buildFilters:
@@ -24,3 +24,5 @@ services:
         value: "https://mbs-frontend-server.onrender.com"
       - key: DEBUG
         value: "false"
+
+

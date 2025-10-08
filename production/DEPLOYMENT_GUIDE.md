@@ -18,7 +18,7 @@ The system is split into three microservices:
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `cp production/pyproject_vector.toml pyproject.toml && poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_vector.toml pyproject.toml && poetry install --only=main --no-root`
    - **Start Command**: `poetry run python production/vector_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
@@ -37,7 +37,7 @@ The system is split into three microservices:
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `cp production/pyproject_ai.toml pyproject.toml && poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_ai.toml pyproject.toml && poetry install --only=main --no-root`
    - **Start Command**: `poetry run python production/ai_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
@@ -56,7 +56,7 @@ The system is split into three microservices:
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `cp production/pyproject_frontend.toml pyproject.toml && poetry install --only=main`
+   - **Build Command**: `cp production/pyproject_frontend.toml pyproject.toml && poetry install --only=main --no-root`
    - **Start Command**: `poetry run python production/frontend_server.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:

@@ -3,7 +3,7 @@ services:
     name: mbs-ai-assistant
     env: python
     plan: free
-    buildCommand: poetry install --only=main --no-dev
+    buildCommand: poetry install --only=main --no-root --no-dev
     startCommand: gunicorn -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT} api.main:app
     healthCheckPath: /health
     envVars:

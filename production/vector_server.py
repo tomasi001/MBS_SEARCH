@@ -297,3 +297,5 @@ if __name__ == "__main__":
     logger.info(f"Sentence transformers available: {SENTENCE_TRANSFORMERS_AVAILABLE}")
 
     uvicorn.run(app, host=host, port=port, log_level="info")
+
+

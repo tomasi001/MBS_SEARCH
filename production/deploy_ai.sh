@@ -40,3 +40,5 @@ poetry install --no-root
 
 # Start the AI server
 poetry run python production/ai_server.py
+
+
