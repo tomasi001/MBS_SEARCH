@@ -8,7 +8,7 @@ The system is split into three microservices:
 
 1. **Frontend Server** - Web UI, API orchestration, MBS code lookup
 2. **AI Server** - Gemini API, natural language processing
-3. **Vector Server** - ChromaDB, sentence-transformers, semantic search
+3. **Vector Server** - ChromaDB, Gemini embeddings, semantic search
 
 ## Deployment Steps
 
@@ -18,18 +18,18 @@ The system is split into three microservices:
 2. Connect to your GitHub repository
 3. Use these settings:
 
-   - **Build Command**: `cp production/pyproject_vector.toml pyproject.toml && poetry install --only=main --no-root`
-   - **Start Command**: `poetry run python production/vector_server.py`
+   - **Build Command**: `cp production/pyproject_vector_gemini.toml pyproject.toml && poetry install --only=main --no-root`
+   - **Start Command**: `poetry run python production/vector_server_gemini.py`
    - **Health Check Path**: `/health`
    - **Environment Variables**:
-     - `USE_LOCAL_EMBEDDINGS=true`
-     - `LOCAL_EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2`
+     - `GEMINI_API_KEY=your_gemini_api_key`
+     - `USE_GEMINI_EMBEDDINGS=true`
      - `CHROMA_PERSIST_DIRECTORY=./chroma_db`
      - `DEBUG=false`
 
 4. Wait for deployment to complete and note the URL (e.g., `https://mbs-vector-server.onrender.com`)
 
-**Dependencies**: ChromaDB, sentence-transformers, FastAPI (~500MB+ download)
+**Dependencies**: ChromaDB, Google Generative AI, FastAPI (~50MB download)
 
 ### Step 2: Deploy AI Server
 
@@ -68,6 +68,24 @@ The system is split into three microservices:
 4. Wait for deployment to complete and note the URL (e.g., `https://mbs-frontend-server.onrender.com`)
 
 **Dependencies**: FastAPI, httpx, pandas, lxml (~30MB download)
+
+### Step 4: Populate Vector Database
+
+After all three servers are deployed and healthy, you need to populate the vector database with MBS codes:
+
+1. **SSH into the Vector Server** (if available) or use Render's shell
+2. **Run the population script**:
+   ```bash
+   cd production
+   python populate_vector_db_production.py
+   ```
+3. **Verify population** by checking the health endpoint:
+   ```bash
+   curl https://mbs-vector-server.onrender.com/health
+   ```
+   Look for `"total_documents" > 0` in the response
+
+**Note**: The vector database starts empty and must be populated with MBS codes for AI functionality to work.
 
 ## Dependency Optimization
 

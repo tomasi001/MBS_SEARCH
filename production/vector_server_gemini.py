@@ -20,6 +20,10 @@ from fastapi.responses import JSONResponse
 import uvicorn
 import google.generativeai as genai
 import numpy as np
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -133,23 +137,39 @@ def generate_embeddings(texts: List[str]) -> List[List[float]]:
         raise Exception("Gemini client not initialized")
 
     try:
-        # Use the correct Gemini API for embeddings
-        result = genai.embed_content(
-            model=GEMINI_EMBEDDING_MODEL,
-            content=texts,
-            task_type="RETRIEVAL_QUERY",
-            output_dimensionality=768,  # Smaller dimension to save space
-        )
-
-        # Extract embeddings and normalize them
+        # Process texts one at a time to ensure we get one embedding per text
         embeddings = []
-        for embedding_values in result["embeddings"]:
-            # Normalize the embedding
-            normed_embedding = np.array(embedding_values) / np.linalg.norm(
-                embedding_values
+        for text in texts:
+            result = genai.embed_content(
+                model=GEMINI_EMBEDDING_MODEL,
+                content=text,
+                task_type="RETRIEVAL_QUERY",
+                output_dimensionality=768,  # Smaller dimension to save space
             )
+            
+            # Extract embedding and normalize it
+            if "embeddings" in result:
+                embedding_values = result["embeddings"][0]
+            elif "embedding" in result:
+                embedding_values = result["embedding"]
+            else:
+                # Try to get the first value that looks like an embedding
+                for key, value in result.items():
+                    if isinstance(value, list) and len(value) > 0:
+                        embedding_values = value[0] if isinstance(value[0], list) else value
+                        break
+                else:
+                    raise Exception(f"Could not find embedding in response: {result}")
+            
+            # Handle nested embedding structure
+            if isinstance(embedding_values, list) and len(embedding_values) > 0 and isinstance(embedding_values[0], list):
+                # If it's nested, flatten it
+                embedding_values = embedding_values[0]
+            
+            # Normalize the embedding
+            normed_embedding = np.array(embedding_values) / np.linalg.norm(embedding_values)
             embeddings.append(normed_embedding.tolist())
-
+        
         logger.info(f"Generated {len(embeddings)} embeddings using Gemini API")
         return embeddings
 

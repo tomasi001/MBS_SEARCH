@@ -328,10 +328,7 @@ ENHANCED_CHAT_UI = """
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🤖 MBS AI Assistant</h1>
-        <p>Find the right MBS codes using natural language or lookup specific items</p>
-    </div>
+   
     
     <div class="main-container">
         <!-- Left Panel: Code Number Search -->
@@ -514,8 +511,16 @@ ENHANCED_CHAT_UI = """
                     const responseText = `I found ${data.suggested_codes.length} MBS codes that match your description:`;
                     addMessageToChat('assistant', responseText);
                     
-                    // Add suggestions
-                    addSuggestionsToChat(data.detailed_suggestions);
+                    // Add suggestions - check if detailed_suggestions exist, otherwise use suggested_codes
+                    if (data.detailed_suggestions && data.detailed_suggestions.length > 0) {
+                        addSuggestionsToChat(data.detailed_suggestions);
+                    }
+
+                    // Add suggested codes as clickable buttons
+                    if {
+                        // Display suggested codes as clickable buttons
+                        addSimpleSuggestionsToChat(data.suggested_codes);
+                    }
                     
                     // Add follow-up prompts
                     if (data.follow_up_questions && data.follow_up_questions.length > 0) {
@@ -592,6 +597,33 @@ ENHANCED_CHAT_UI = """
             });
             
             html += '</div></div>';
+            suggestionsDiv.innerHTML = html;
+            
+            chatMessages.appendChild(suggestionsDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addSimpleSuggestionsToChat(suggestedCodes) {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'message assistant';
+            
+            let html = '<div class="message-content"><div class="ai-suggestions">';
+            html += '<p style="margin-bottom: 15px; color: #666;">Click on any code below to add it to the lookup panel:</p>';
+            
+            // Create a grid of clickable code buttons
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">';
+            
+            suggestedCodes.forEach(code => {
+                html += `
+                    <button class="btn" style="margin: 0; padding: 10px 15px; font-size: 14px;" onclick="addCodeToLeftPanel('${code}')">
+                        ${code}
+                    </button>
+                `;
+            });
+            
+            html += '</div></div></div>';
             suggestionsDiv.innerHTML = html;
             
             chatMessages.appendChild(suggestionsDiv);

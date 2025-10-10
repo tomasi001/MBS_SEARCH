@@ -4,24 +4,23 @@ services:
     env: python
     plan: free
     rootDir: production/
-    buildCommand: cp pyproject_vector.toml pyproject.toml && poetry install --only=main --no-root
-    startCommand: poetry run python vector_server.py
+    buildCommand: cp pyproject_vector_gemini.toml pyproject.toml && poetry install --only=main --no-root
+    startCommand: poetry run python vector_server_gemini.py
     healthCheckPath: /health
     buildFilters:
       includedPaths:
-        - vector_server.py
-        - pyproject_vector.toml
-        - ../config.py
+        - vector_server_gemini.py
+        - pyproject_vector_gemini.toml
+        - config.py
+        - ../mbs.db
       ignoredPaths:
         - "*"
     envVars:
-      - key: USE_LOCAL_EMBEDDINGS
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: USE_GEMINI_EMBEDDINGS
         value: "true"
-      - key: LOCAL_EMBEDDING_MODEL
-        value: "sentence-transformers/all-MiniLM-L6-v2"
       - key: CHROMA_PERSIST_DIRECTORY
         value: "./chroma_db"
       - key: DEBUG
         value: "false"
-
-

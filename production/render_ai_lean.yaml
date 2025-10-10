@@ -11,8 +11,9 @@ services:
       includedPaths:
         - ai_server.py
         - pyproject_ai.toml
-        - ../config.py
+        - config.py
         - ../services/gemini_service.py
+        - ../mbs.db
       ignoredPaths:
         - "*"
     envVars:
@@ -24,5 +25,3 @@ services:
         value: "https://mbs-frontend-server.onrender.com"
       - key: DEBUG
         value: "false"
-
-
