@@ -51,10 +51,12 @@ Thumbs.db
 logs/
 
 # Database files (keep mbs.db for production)
-# mbs.db
-chroma_db/
 *.sqlite
 *.sqlite3
+
+# Vector database (keep populated chroma_db for production)
+# Note: chroma_db/ is already tracked and should remain tracked
+# production/chroma_db/ should be tracked for production deployment
 
 # Poetry
 poetry.lock
