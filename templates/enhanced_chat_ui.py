@@ -105,9 +105,10 @@ ENHANCED_CHAT_UI = """
         }
         
         .chat-input {
-            flex: 1; border: none; background: transparent; padding: 12px 16px;
-            font-size: 16px; resize: none; outline: none; min-height: 24px;
-            max-height: 120px; font-family: inherit;
+            flex: 1; border: none; background: transparent; padding: 2px 6px;
+            font-size: 16px; resize: none; outline: none; min-height: 48px;
+            max-height: 25vh; font-family: inherit; overflow-y: auto;
+            line-height: 1.4;
         }
         
         .chat-send-btn {
@@ -143,19 +144,23 @@ ENHANCED_CHAT_UI = """
         }
         
         .search-container {
-            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+            margin-bottom: 20px;
         }
         
         .search-input {
-            flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
-            font-size: 16px; font-family: inherit;
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 16px; font-family: inherit; margin-bottom: 10px;
+        }
+        
+        .button-row {
+            display: flex; gap: 10px;
         }
         
         .search-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
             color: white; border: none; padding: 12px 20px; border-radius: 8px; 
             cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s;
-            white-space: nowrap;
+            white-space: nowrap; flex: 1;
         }
         .search-btn:hover { transform: translateY(-2px); }
         .search-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
@@ -164,7 +169,7 @@ ENHANCED_CHAT_UI = """
             background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white; border: none; padding: 12px 20px; border-radius: 8px; 
             cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s;
-            white-space: nowrap;
+            white-space: nowrap; flex: 1;
         }
         .clear-btn:hover {
             background: linear-gradient(135deg, #545b62 0%, #343a40 100%);
@@ -339,37 +344,116 @@ ENHANCED_CHAT_UI = """
             font-size: 0.9em; line-height: 1.5;
         }
         
+        /* Tab layout styles */
+        .tab-container {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .tab-header {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e1e5e9;
+            flex-shrink: 0;
+        }
+        
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab-button.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+            background: #f8f9fa;
+        }
+        
+        .tab-button:hover {
+            background: #f8f9fa;
+        }
+        
+        .tab-content {
+            flex: 1;
+            overflow: hidden;
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Loading message styles */
+        .loading-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-style: italic;
+        }
+        
+        .loading-message::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Responsive breakpoints */
+        @media (max-width: 1280px) {
+            /* No changes needed - layout is already optimal */
+        }
+        
         @media (max-width: 768px) {
             .main-container {
-                flex-direction: column;
+                display: none;
+            }
+            
+            .tab-container {
+                display: flex;
             }
             
             .left-panel, .right-panel {
                 width: 100%;
+                height: 100%;
             }
             
-            .left-panel {
-                height: 40vh;
+            .panel-header {
+                display: none;
             }
             
-            .right-panel {
-                height: 60vh;
+            .code-search-section {
+                padding: 15px;
             }
             
-            .search-container {
-                flex-direction: column;
-                gap: 10px;
+            .chat-container {
+                height: 100%;
             }
             
-            .search-btn, .clear-btn {
-                width: 100%;
+            .chat-messages {
+                padding: 15px;
+            }
+            
+            .chat-input-container {
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-   
-    
+    <!-- Desktop Layout -->
     <div class="main-container">
         <!-- Left Panel: Code Number Search -->
         <div class="left-panel">
@@ -383,8 +467,10 @@ ENHANCED_CHAT_UI = """
                 
                 <div class="search-container">
                     <input type="text" id="codes" class="search-input" placeholder="e.g., 3,23,104" />
-                    <button class="search-btn" onclick="performCodeSearch()">🔍 Lookup</button>
-                    <button class="clear-btn" onclick="clearCodeSearch()">🗑️ Clear</button>
+                    <div class="button-row">
+                        <button class="search-btn" onclick="performCodeSearch()">🔍 Lookup</button>
+                        <button class="clear-btn" onclick="clearCodeSearch()">🗑️ Clear</button>
+                    </div>
                 </div>
                 
                 <div id="code-search-error" class="error" style="display: none;"></div>
@@ -432,26 +518,107 @@ ENHANCED_CHAT_UI = """
         </div>
     </div>
     
+    <!-- Mobile Tab Layout -->
+    <div class="tab-container">
+        <div class="tab-header">
+            <button class="tab-button active" onclick="switchTab('chat')">
+                💬 AI Assistant Chat
+                <span id="mobile-ai-status" class="ai-status-header" style="font-size: 0.8em;">
+                    <div class="loading">Checking...</div>
+                </span>
+            </button>
+            <button class="tab-button" onclick="switchTab('lookup')">
+                📋 MBS Code Lookup
+            </button>
+        </div>
+        
+        <div class="tab-content active" id="chat-tab">
+            <div class="right-panel">
+                <div class="chat-container">
+                    <div class="chat-messages" id="mobile-chat-messages">
+                        <div class="empty-state">
+                            <h3>👋 Welcome to MBS AI Assistant!</h3>
+                            <p>I can help you find the right MBS codes for medical procedures, consultations, and treatments. Just describe what you did in natural language, and I'll suggest the most appropriate codes.</p>
+                            <br>
+                            <p><strong>Try asking:</strong></p>
+                            <p>"I performed a consultation for a patient with chest pain"</p>
+                            <p>"I did a comprehensive examination of a patient"</p>
+                            <p>"I performed surgery on a patient's knee"</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="chat-input-wrapper">
+                            <textarea 
+                                id="mobile-chat-input" 
+                                class="chat-input" 
+                                placeholder="Describe the medical procedure or consultation..."
+                                rows="1"
+                            ></textarea>
+                            <button id="mobile-chat-send-btn" class="chat-send-btn" onclick="sendMobileMessage()">
+                                ➤
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="lookup-tab">
+            <div class="left-panel">
+                <div class="code-search-section">
+                    <div class="input-group">
+                        <label for="mobile-codes">Enter MBS item numbers (comma-separated):</label>
+                    </div>
+                    
+                    <div class="search-container">
+                        <input type="text" id="mobile-codes" class="search-input" placeholder="e.g., 3,23,104" />
+                        <div class="button-row">
+                            <button class="search-btn" onclick="performMobileCodeSearch()">🔍 Lookup</button>
+                            <button class="clear-btn" onclick="clearMobileCodeSearch()">🗑️ Clear</button>
+                        </div>
+                    </div>
+                    
+                    <div id="mobile-code-search-error" class="error" style="display: none;"></div>
+                    <div id="mobile-code-search-notice" class="notice" style="display: none;"></div>
+                    
+                    <div id="mobile-code-search-results" class="results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Global variables
         let aiEnabled = false;
         let conversationHistory = [];
         let isProcessing = false;
+        let mobileConversationHistory = [];
+        let isMobileProcessing = false;
         
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             checkAIStatus();
             setupEventListeners();
+            setupMobileEventListeners();
         });
         
         function setupEventListeners() {
             const chatInput = document.getElementById('chat-input');
             const chatSendBtn = document.getElementById('chat-send-btn');
             
-            // Auto-resize textarea
+            // Auto-resize textarea and adjust padding
             chatInput.addEventListener('input', function() {
                 this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                const maxHeight = window.innerHeight * 0.25; // 25% of viewport height
+                this.style.height = Math.min(this.scrollHeight, maxHeight) + 'px';
+                
+                // Adjust padding based on content
+                if (this.value.trim() === '') {
+                    this.style.padding = '2px 6px';
+                } else {
+                    this.style.padding = '14px 6px';
+                }
             });
             
             // Send message on Enter (but not Shift+Enter)
@@ -480,15 +647,27 @@ ENHANCED_CHAT_UI = """
                 
                 aiEnabled = data.ai_enabled;
                 
+                // Update desktop status
                 const statusElement = document.getElementById('ai-status-header');
                 if (aiEnabled) {
                     statusElement.innerHTML = '✅ Ready';
                 } else {
                     statusElement.innerHTML = '❌ Unavailable';
                 }
+                
+                // Update mobile status
+                const mobileStatusElement = document.getElementById('mobile-ai-status');
+                if (aiEnabled) {
+                    mobileStatusElement.innerHTML = '';
+                } else {
+                    mobileStatusElement.innerHTML = '❌ Unavailable';
+                }
             } catch (error) {
                 const statusElement = document.getElementById('ai-status-header');
                 statusElement.innerHTML = '❌ Error';
+                
+                const mobileStatusElement = document.getElementById('mobile-ai-status');
+                mobileStatusElement.innerHTML = '❌ Error';
             }
         }
         
@@ -501,9 +680,13 @@ ENHANCED_CHAT_UI = """
             // Clear input
             chatInput.value = '';
             chatInput.style.height = 'auto';
+            chatInput.style.padding = '2px 6px';
             
             // Add user message to chat
             addMessageToChat('user', message);
+            
+            // Add loading message
+            addLoadingMessageToChat();
             
             // Show processing state
             setProcessingState(true);
@@ -538,6 +721,9 @@ ENHANCED_CHAT_UI = """
                     content: message,
                     timestamp: new Date().toISOString()
                 });
+                
+                // Remove loading message
+                removeLoadingMessageFromChat();
                 
                 if (data.error) {
                     // Handle error response
@@ -576,6 +762,8 @@ ENHANCED_CHAT_UI = """
                 }
                 
             } catch (error) {
+                // Remove loading message on error
+                removeLoadingMessageFromChat();
                 addMessageToChat('assistant', `❌ Sorry, there was an error processing your request: ${error.message}`);
             } finally {
                 setProcessingState(false);
@@ -605,6 +793,36 @@ ENHANCED_CHAT_UI = """
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addLoadingMessageToChat() {
+            const chatMessages = document.getElementById('chat-messages');
+            
+            // Remove empty state if it exists
+            const emptyState = chatMessages.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant';
+            loadingDiv.id = 'loading-message';
+            
+            loadingDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="loading-message">Thinking...</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function removeLoadingMessageFromChat() {
+            const loadingMessage = document.getElementById('loading-message');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
         }
         
         function addSuggestionsToChat(suggestions) {
@@ -698,7 +916,9 @@ ENHANCED_CHAT_UI = """
             chatInput.value = question;
             chatInput.focus();
             chatInput.style.height = 'auto';
-            chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+            const maxHeight = window.innerHeight * 0.25; // 25% of viewport height
+            chatInput.style.height = Math.min(chatInput.scrollHeight, maxHeight) + 'px';
+            chatInput.style.padding = '14px 6px';
         }
         
         function setProcessingState(processing) {
@@ -929,6 +1149,473 @@ ENHANCED_CHAT_UI = """
                     element.style.display = 'none';
                 }
             });
+        }
+        
+        // Mobile functionality
+        function setupMobileEventListeners() {
+            const mobileChatInput = document.getElementById('mobile-chat-input');
+            const mobileChatSendBtn = document.getElementById('mobile-chat-send-btn');
+            
+            // Auto-resize textarea and adjust padding
+            mobileChatInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                const maxHeight = window.innerHeight * 0.25; // 25% of viewport height
+                this.style.height = Math.min(this.scrollHeight, maxHeight) + 'px';
+                
+                // Adjust padding based on content
+                if (this.value.trim() === '') {
+                    this.style.padding = '2px 6px';
+                } else {
+                    this.style.padding = '14px 6px';
+                }
+            });
+            
+            // Send message on Enter (but not Shift+Enter)
+            mobileChatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMobileMessage();
+                }
+            });
+            
+            // Send button click
+            mobileChatSendBtn.addEventListener('click', sendMobileMessage);
+            
+            // Mobile code input Enter key
+            document.getElementById('mobile-codes').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performMobileCodeSearch();
+                }
+            });
+        }
+        
+        function switchTab(tabName) {
+            // Remove active class from all tabs and buttons
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and button
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        async function sendMobileMessage() {
+            const chatInput = document.getElementById('mobile-chat-input');
+            const message = chatInput.value.trim();
+            
+            if (!message || isMobileProcessing) return;
+            
+            // Clear input
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            chatInput.style.padding = '2px 6px';
+            
+            // Add user message to mobile chat
+            addMessageToMobileChat('user', message);
+            
+            // Add loading message
+            addLoadingMessageToMobileChat();
+            
+            // Show processing state
+            setMobileProcessingState(true);
+            
+            try {
+                let response;
+                
+                if (mobileConversationHistory.length > 0) {
+                    // Use conversational endpoint
+                    response = await fetch('/api/ai/conversation', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            query: message,
+                            conversation_history: mobileConversationHistory
+                        })
+                    });
+                } else {
+                    // Use regular endpoint
+                    response = await fetch('/api/ai/natural-language', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ query: message })
+                    });
+                }
+                
+                const data = await response.json();
+                
+                // Add to mobile conversation history
+                mobileConversationHistory.push({
+                    type: 'user',
+                    content: message,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Remove loading message
+                removeLoadingMessageFromMobileChat();
+                
+                if (data.error) {
+                    // Handle error response
+                    addMessageToMobileChat('assistant', `❌ ${data.error}`);
+                } else if (data.suggested_codes && data.suggested_codes.length > 0) {
+                    // Handle successful response with suggestions
+                    const responseText = `I found ${data.suggested_codes.length} MBS codes that match your description:`;
+                    addMessageToMobileChat('assistant', responseText);
+                    
+                    // Add suggestions - check if detailed_suggestions exist, otherwise use suggested_codes
+                    if (data.detailed_suggestions && data.detailed_suggestions.length > 0) {
+                        addSuggestionsToMobileChat(data.detailed_suggestions);
+                    }
+
+                    // Add suggested codes as clickable buttons
+                    if (data.suggested_codes && data.suggested_codes.length > 0) {
+                        // Display suggested codes as clickable buttons
+                        addSimpleSuggestionsToMobileChat(data.suggested_codes);
+                    }
+                    
+                    // Add follow-up prompts
+                    if (data.follow_up_questions && data.follow_up_questions.length > 0) {
+                        addFollowUpPromptsToMobileChat(data.follow_up_questions);
+                    }
+                    
+                    // Add assistant response to mobile conversation history
+                    mobileConversationHistory.push({
+                        type: 'assistant',
+                        content: responseText,
+                        suggested_codes: data.suggested_codes,
+                        timestamp: new Date().toISOString()
+                    });
+                } else {
+                    // No suggestions found
+                    addMessageToMobileChat('assistant', "I couldn't find any matching MBS codes for that description. Could you provide more details about the procedure or consultation?");
+                }
+                
+            } catch (error) {
+                // Remove loading message on error
+                removeLoadingMessageFromMobileChat();
+                addMessageToMobileChat('assistant', `❌ Sorry, there was an error processing your request: ${error.message}`);
+            } finally {
+                setMobileProcessingState(false);
+            }
+        }
+        
+        function addMessageToMobileChat(type, content) {
+            const chatMessages = document.getElementById('mobile-chat-messages');
+            
+            // Remove empty state if it exists
+            const emptyState = chatMessages.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const time = new Date().toLocaleTimeString();
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ${content}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addLoadingMessageToMobileChat() {
+            const chatMessages = document.getElementById('mobile-chat-messages');
+            
+            // Remove empty state if it exists
+            const emptyState = chatMessages.querySelector('.empty-state');
+            if (emptyState) {
+                emptyState.remove();
+            }
+            
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant';
+            loadingDiv.id = 'mobile-loading-message';
+            
+            loadingDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="loading-message">Thinking...</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(loadingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function removeLoadingMessageFromMobileChat() {
+            const loadingMessage = document.getElementById('mobile-loading-message');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+        
+        function setMobileProcessingState(processing) {
+            isMobileProcessing = processing;
+            const sendBtn = document.getElementById('mobile-chat-send-btn');
+            const chatInput = document.getElementById('mobile-chat-input');
+            
+            if (processing) {
+                sendBtn.disabled = true;
+                chatInput.disabled = true;
+                sendBtn.innerHTML = '⏳';
+            } else {
+                sendBtn.disabled = false;
+                chatInput.disabled = false;
+                sendBtn.innerHTML = '➤';
+            }
+        }
+        
+        // Mobile code search functionality
+        async function performMobileCodeSearch() {
+            const codesInput = document.getElementById('mobile-codes').value.trim();
+            if (!codesInput) {
+                showError('mobile-code-search-error', 'Please enter one or more MBS item numbers.');
+                return Promise.resolve();
+            }
+            
+            const codes = codesInput.split(',').map(c => c.trim()).filter(c => c);
+            if (codes.length === 0) {
+                showError('mobile-code-search-error', 'Please enter valid MBS item numbers.');
+                return Promise.resolve();
+            }
+            
+            showLoading('mobile-code-search-notice', 'Looking up MBS codes...');
+            
+            try {
+                const response = await fetch('/api/items?codes=' + encodeURIComponent(codes.join(',')));
+                const data = await response.json();
+                
+                if (data.items && data.items.length > 0) {
+                    displayMobileResults(data.items);
+                    showSuccess('mobile-code-search-notice', `Found ${data.items.length} MBS codes`);
+                } else {
+                    showNotice('mobile-code-search-notice', 'No codes found. Please check the item numbers.');
+                }
+                
+                return Promise.resolve();
+                
+            } catch (error) {
+                showError('mobile-code-search-error', 'Lookup failed: ' + error.message);
+                return Promise.resolve();
+            } finally {
+                hideLoading('mobile-code-search-notice');
+            }
+        }
+        
+        function clearMobileCodeSearch() {
+            document.getElementById('mobile-codes').value = '';
+            document.getElementById('mobile-code-search-results').innerHTML = '';
+            hideMessages(['mobile-code-search-error', 'mobile-code-search-notice']);
+        }
+        
+        function addCodeToMobileLeftPanel(code) {
+            const inputField = document.getElementById('mobile-codes');
+            const currentCodes = inputField.value ? inputField.value.split(',').map(c => c.trim()) : [];
+            
+            if (!currentCodes.includes(code)) {
+                currentCodes.push(code);
+                inputField.value = currentCodes.join(', ');
+                performMobileCodeSearch().then(() => {
+                    // Scroll to the newly added code element after search completes
+                    setTimeout(() => {
+                        scrollToMobileCodeElement(code);
+                    }, 100);
+                });
+            } else {
+                // If code already exists, just scroll to it
+                scrollToMobileCodeElement(code);
+            }
+        }
+        
+        function scrollToMobileCodeElement(code) {
+            const codeElement = document.querySelector(`[data-mobile-item-code="${code}"]`);
+            if (codeElement) {
+                codeElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+                
+                // Add a temporary highlight effect
+                codeElement.style.backgroundColor = '#fff3cd';
+                codeElement.style.borderColor = '#ffc107';
+                setTimeout(() => {
+                    codeElement.style.backgroundColor = '';
+                    codeElement.style.borderColor = '';
+                }, 2000);
+            }
+        }
+        
+        function displayMobileResults(items) {
+            const container = document.getElementById('mobile-code-search-results');
+            if (!items || items.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '<h3>📋 MBS Code Results</h3>';
+            
+            items.forEach(item => {
+                html += `
+                    <div class="item" data-mobile-item-code="${item.item.item_num}">
+                        <div class="item-header">
+                            <span class="item-title">MBS Code ${item.item.item_num}</span>
+                            <button class="remove-btn" onclick="removeMobileItem('${item.item.item_num}')">✕</button>
+                        </div>
+                        
+                        <div class="item-details">
+                            <div class="item-detail"><strong>Category:</strong> ${item.item.category}</div>
+                            <div class="item-detail"><strong>Fee:</strong> $${item.item.schedule_fee}</div>
+                            <div class="item-detail"><strong>Description:</strong> ${item.item.description}</div>
+                        </div>
+                        
+                        ${item.constraints && item.constraints.length > 0 ? `
+                            <div class="constraints">
+                                <h4>📋 Requirements & Constraints</h4>
+                                ${groupConstraints(item.constraints)}
+                            </div>
+                        ` : ''}
+                        
+                        ${item.relations && item.relations.length > 0 ? `
+                            <div class="relations">
+                                <h4>🔗 Related Codes</h4>
+                                ${item.relations.map(rel => `
+                                    <div class="relation">
+                                        <strong>${rel.relation_type}:</strong> 
+                                        ${rel.target_item_num ? `<span class="clickable-code" onclick="addCodeToMobileLeftPanel('${rel.target_item_num}')">${rel.target_item_num}</span>` : ''}
+                                        ${rel.detail ? ` - ${rel.detail}` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        function removeMobileItem(itemCode) {
+            const itemElement = document.querySelector(`[data-mobile-item-code="${itemCode}"]`);
+            if (itemElement) {
+                itemElement.remove();
+                updateMobileLeftPanelInputField();
+            }
+        }
+        
+        function updateMobileLeftPanelInputField() {
+            const displayedItems = document.querySelectorAll('#mobile-code-search-results .item');
+            const codes = [];
+            displayedItems.forEach(item => {
+                const code = item.getAttribute('data-mobile-item-code');
+                if (code) {
+                    codes.push(code);
+                }
+            });
+            
+            const inputField = document.getElementById('mobile-codes');
+            inputField.value = codes.join(', ');
+        }
+        
+        // Mobile suggestion functions
+        function addSuggestionsToMobileChat(suggestions) {
+            const chatMessages = document.getElementById('mobile-chat-messages');
+            
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'message assistant';
+            
+            let html = '<div class="message-content"><div class="ai-suggestions">';
+            
+            suggestions.forEach(suggestion => {
+                html += `
+                    <div class="suggestion">
+                        <div class="suggestion-header">
+                            <span class="suggestion-code clickable-code" onclick="addCodeToMobileLeftPanel('${suggestion.code}')">
+                                ${suggestion.code}
+                            </span>
+                            <span class="suggestion-confidence">${suggestion.confidence}% match</span>
+                        </div>
+                        <div class="suggestion-reasoning">${suggestion.reasoning}</div>
+                        <div style="font-size: 0.9em; color: #666; margin-top: 8px;">
+                            ${suggestion.description}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            suggestionsDiv.innerHTML = html;
+            
+            chatMessages.appendChild(suggestionsDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addSimpleSuggestionsToMobileChat(suggestedCodes) {
+            const chatMessages = document.getElementById('mobile-chat-messages');
+            
+            const suggestionsDiv = document.createElement('div');
+            suggestionsDiv.className = 'message assistant';
+            
+            let html = '<div class="message-content"><div class="ai-suggestions">';
+            html += '<p style="margin-bottom: 15px; color: #666;">Click on any code below to add it to the lookup panel:</p>';
+            
+            // Create a grid of clickable code buttons
+            html += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;">';
+            
+            suggestedCodes.forEach(code => {
+                html += `
+                    <button class="btn" style="margin: 0; padding: 10px 15px; font-size: 14px;" onclick="addCodeToMobileLeftPanel('${code}')">
+                        ${code}
+                    </button>
+                `;
+            });
+            
+            html += '</div></div></div>';
+            suggestionsDiv.innerHTML = html;
+            
+            chatMessages.appendChild(suggestionsDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function addFollowUpPromptsToMobileChat(questions) {
+            const chatMessages = document.getElementById('mobile-chat-messages');
+            
+            const promptsDiv = document.createElement('div');
+            promptsDiv.className = 'message assistant';
+            
+            let html = `
+                <div class="message-content">
+                    <div class="follow-up-prompt">
+                        <h4>💡 To help me find more specific codes, please provide:</h4>
+            `;
+            
+            questions.forEach(question => {
+                html += `
+                    <div class="follow-up-suggestion" onclick="useMobileFollowUpPrompt('${question.replace(/'/g, "\\'")}')">
+                        ${question}
+                    </div>
+                `;
+            });
+            
+            html += '</div></div>';
+            promptsDiv.innerHTML = html;
+            
+            chatMessages.appendChild(promptsDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function useMobileFollowUpPrompt(question) {
+            const chatInput = document.getElementById('mobile-chat-input');
+            chatInput.value = question;
+            chatInput.focus();
+            chatInput.style.height = 'auto';
+            const maxHeight = window.innerHeight * 0.25; // 25% of viewport height
+            chatInput.style.height = Math.min(chatInput.scrollHeight, maxHeight) + 'px';
+            chatInput.style.padding = '14px 6px';
         }
     </script>
 </body>
