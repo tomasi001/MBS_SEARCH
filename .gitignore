@@ -51,8 +51,8 @@ Thumbs.db
 logs/
 
 # Database files (keep mbs.db for production)
-*.sqlite
-*.sqlite3
+# *.sqlite
+# *.sqlite3
 
 # Vector database (keep populated chroma_db for production)
 # Note: chroma_db/ is already tracked and should remain tracked

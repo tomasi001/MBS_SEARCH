@@ -38,7 +38,21 @@ ENHANCED_CHAT_UI = """
         
         .panel-header {
             padding: 20px; border-bottom: 1px solid #e1e5e9; background: white;
-            font-weight: 600; font-size: 1.1em;
+            font-weight: 600; font-size: 1.1em; display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        .ai-status-header {
+            font-size: 0.9em; font-weight: 500;
+        }
+        
+        .ai-status-header .loading {
+            color: #666; font-style: italic;
+        }
+        
+        .ai-status-header .loading::after {
+            content: ''; width: 16px; height: 16px; border: 2px solid #f3f3f3;
+            border-top: 2px solid #007bff; border-radius: 50%; animation: spin 1s linear infinite;
+            display: inline-block; margin-left: 8px; vertical-align: middle;
         }
         
         .chat-container {
@@ -126,6 +140,35 @@ ENHANCED_CHAT_UI = """
         .input-group input {
             width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
             font-size: 16px; font-family: inherit;
+        }
+        
+        .search-container {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px;
+            font-size: 16px; font-family: inherit;
+        }
+        
+        .search-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; border: none; padding: 12px 20px; border-radius: 8px; 
+            cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s;
+            white-space: nowrap;
+        }
+        .search-btn:hover { transform: translateY(-2px); }
+        .search-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+        
+        .clear-btn {
+            background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+            color: white; border: none; padding: 12px 20px; border-radius: 8px; 
+            cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s;
+            white-space: nowrap;
+        }
+        .clear-btn:hover {
+            background: linear-gradient(135deg, #545b62 0%, #343a40 100%);
+            transform: translateY(-2px);
         }
         
         .btn {
@@ -259,18 +302,6 @@ ENHANCED_CHAT_UI = """
             100% { transform: rotate(360deg); }
         }
         
-        .ai-status {
-            padding: 15px; margin-bottom: 20px; border-radius: 8px;
-            text-align: center; font-weight: 500;
-        }
-        
-        .ai-status.enabled {
-            background: #d4edda; color: #155724; border: 1px solid #c3e6cb;
-        }
-        
-        .ai-status.disabled {
-            background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
-        }
         
         .constraints, .relations {
             margin-top: 15px;
@@ -324,6 +355,15 @@ ENHANCED_CHAT_UI = """
             .right-panel {
                 height: 60vh;
             }
+            
+            .search-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-btn, .clear-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -337,18 +377,14 @@ ENHANCED_CHAT_UI = """
                 📋 MBS Code Lookup
             </div>
             <div class="code-search-section">
-                <div id="ai-status" class="ai-status">
-                    <div class="loading">Checking AI services...</div>
-                </div>
-                
                 <div class="input-group">
                     <label for="codes">Enter MBS item numbers (comma-separated):</label>
-                    <input type="text" id="codes" placeholder="e.g., 3,23,104" />
                 </div>
                 
-                <div class="button-group">
-                    <button class="btn" onclick="performCodeSearch()">🔍 Lookup Codes</button>
-                    <button class="btn btn-secondary" onclick="clearCodeSearch()">🗑️ Clear</button>
+                <div class="search-container">
+                    <input type="text" id="codes" class="search-input" placeholder="e.g., 3,23,104" />
+                    <button class="search-btn" onclick="performCodeSearch()">🔍 Lookup</button>
+                    <button class="clear-btn" onclick="clearCodeSearch()">🗑️ Clear</button>
                 </div>
                 
                 <div id="code-search-error" class="error" style="display: none;"></div>
@@ -362,6 +398,9 @@ ENHANCED_CHAT_UI = """
         <div class="right-panel">
             <div class="panel-header">
                 💬 AI Assistant Chat
+                <span id="ai-status-header" class="ai-status-header">
+                    <div class="loading">Checking AI services...</div>
+                </span>
             </div>
             <div class="chat-container">
                 <div class="chat-messages" id="chat-messages">
@@ -441,18 +480,15 @@ ENHANCED_CHAT_UI = """
                 
                 aiEnabled = data.ai_enabled;
                 
-                const statusElement = document.getElementById('ai-status');
+                const statusElement = document.getElementById('ai-status-header');
                 if (aiEnabled) {
-                    statusElement.className = 'ai-status enabled';
-                    statusElement.innerHTML = '✅ AI services are ready';
+                    statusElement.innerHTML = '✅ Ready';
                 } else {
-                    statusElement.className = 'ai-status disabled';
-                    statusElement.innerHTML = '❌ AI services unavailable';
+                    statusElement.innerHTML = '❌ Unavailable';
                 }
             } catch (error) {
-                const statusElement = document.getElementById('ai-status');
-                statusElement.className = 'ai-status disabled';
-                statusElement.innerHTML = '❌ Error checking AI status';
+                const statusElement = document.getElementById('ai-status-header');
+                statusElement.innerHTML = '❌ Error';
             }
         }
         
@@ -681,18 +717,18 @@ ENHANCED_CHAT_UI = """
             }
         }
         
-        // Code search functionality (unchanged)
+        // Code search functionality
         async function performCodeSearch() {
             const codesInput = document.getElementById('codes').value.trim();
             if (!codesInput) {
                 showError('code-search-error', 'Please enter one or more MBS item numbers.');
-                return;
+                return Promise.resolve();
             }
             
             const codes = codesInput.split(',').map(c => c.trim()).filter(c => c);
             if (codes.length === 0) {
                 showError('code-search-error', 'Please enter valid MBS item numbers.');
-                return;
+                return Promise.resolve();
             }
             
             showLoading('code-search-notice', 'Looking up MBS codes...');
@@ -708,8 +744,11 @@ ENHANCED_CHAT_UI = """
                     showNotice('code-search-notice', 'No codes found. Please check the item numbers.');
                 }
                 
+                return Promise.resolve();
+                
             } catch (error) {
                 showError('code-search-error', 'Lookup failed: ' + error.message);
+                return Promise.resolve();
             } finally {
                 hideLoading('code-search-notice');
             }
@@ -728,7 +767,34 @@ ENHANCED_CHAT_UI = """
             if (!currentCodes.includes(code)) {
                 currentCodes.push(code);
                 inputField.value = currentCodes.join(', ');
-                performCodeSearch();
+                performCodeSearch().then(() => {
+                    // Scroll to the newly added code element after search completes
+                    setTimeout(() => {
+                        scrollToCodeElement(code);
+                    }, 100);
+                });
+            } else {
+                // If code already exists, just scroll to it
+                scrollToCodeElement(code);
+            }
+        }
+        
+        function scrollToCodeElement(code) {
+            const codeElement = document.querySelector(`[data-item-code="${code}"]`);
+            if (codeElement) {
+                codeElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center',
+                    inline: 'nearest'
+                });
+                
+                // Add a temporary highlight effect
+                codeElement.style.backgroundColor = '#fff3cd';
+                codeElement.style.borderColor = '#ffc107';
+                setTimeout(() => {
+                    codeElement.style.backgroundColor = '';
+                    codeElement.style.borderColor = '';
+                }, 2000);
             }
         }
         
