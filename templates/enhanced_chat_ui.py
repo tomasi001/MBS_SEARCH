@@ -517,7 +517,7 @@ ENHANCED_CHAT_UI = """
                     }
 
                     // Add suggested codes as clickable buttons
-                    if {
+                    if (data.suggested_codes && data.suggested_codes.length > 0) {
                         // Display suggested codes as clickable buttons
                         addSimpleSuggestionsToChat(data.suggested_codes);
                     }
