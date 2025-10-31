@@ -1,0 +1,39 @@
+{
+  "total": 1000,
+  "passed": 1000,
+  "failed": 0,
+  "errors": 0,
+  "by_category": {
+    "P1": {
+      "passed": 100,
+      "failed": 0,
+      "errors": 0
+    },
+    "C1": {
+      "passed": 300,
+      "failed": 0,
+      "errors": 0
+    },
+    "C2": {
+      "passed": 150,
+      "failed": 0,
+      "errors": 0
+    },
+    "C3": {
+      "passed": 100,
+      "failed": 0,
+      "errors": 0
+    },
+    "C4": {
+      "passed": 100,
+      "failed": 0,
+      "errors": 0
+    },
+    "YAY": {
+      "passed": 250,
+      "failed": 0,
+      "errors": 0
+    }
+  },
+  "failed_tests": []
+}

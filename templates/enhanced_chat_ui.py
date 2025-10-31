@@ -13,7 +13,7 @@ ENHANCED_CHAT_UI = """
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             line-height: 1.6; color: #333; background: #f7f7f8; height: 100vh;
-            display: flex; flex-direction: column;
+            display: flex; flex-direction: column; margin: 0; padding: 0; overflow: hidden;
         }
         
         .header { 
@@ -344,6 +344,47 @@ ENHANCED_CHAT_UI = """
             font-size: 0.9em; line-height: 1.5;
         }
         
+        /* Desktop tabs */
+        .desktop-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e1e5e9;
+            flex-shrink: 0;
+        }
+        
+        .desktop-tab-button {
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .desktop-tab-button.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+            background: #f8f9fa;
+        }
+        
+        .desktop-tab-button:hover {
+            background: #f8f9fa;
+        }
+        
+        .desktop-tab-content {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        
+        .desktop-tab-content.active {
+            display: flex;
+        }
+        
         /* Tab layout styles */
         .tab-container {
             display: none;
@@ -392,6 +433,63 @@ ENHANCED_CHAT_UI = """
             flex-direction: column;
         }
         
+        /* Compatibility Checker Styles */
+        .compatibility-section {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .compatibility-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #e1e5e9;
+        }
+        
+        .compatibility-result.yay {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        
+        .compatibility-result.nay {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        
+        .compatibility-result .decision {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .compatibility-result .reason {
+            font-size: 1em;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .compatibility-result .details {
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+        
+        .compatibility-result .details h4 {
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+        
+        .compatibility-result .details ul {
+            margin-left: 20px;
+            margin-top: 5px;
+        }
+        
+        .compatibility-result .details li {
+            margin-bottom: 5px;
+        }
+        
         /* Loading message styles */
         .loading-message {
             display: flex;
@@ -417,6 +515,14 @@ ENHANCED_CHAT_UI = """
         }
         
         @media (max-width: 768px) {
+            .desktop-tabs {
+                display: none;
+            }
+            
+            .desktop-tab-content {
+                display: none !important;
+            }
+            
             .main-container {
                 display: none;
             }
@@ -454,7 +560,17 @@ ENHANCED_CHAT_UI = """
 </head>
 <body>
     <!-- Desktop Layout -->
-    <div class="main-container">
+    <div class="desktop-tabs">
+        <button class="desktop-tab-button active" onclick="switchDesktopTab('main')">
+            💬 Chat & Lookup
+        </button>
+        <button class="desktop-tab-button" onclick="switchDesktopTab('compatibility')">
+            ✅ Compatibility Check
+        </button>
+    </div>
+    
+    <div class="desktop-tab-content active" id="desktop-main-tab">
+        <div class="main-container">
         <!-- Left Panel: Code Number Search -->
         <div class="left-panel">
             <div class="panel-header">
@@ -516,6 +632,33 @@ ENHANCED_CHAT_UI = """
                 </div>
             </div>
         </div>
+        </div>
+    </div>
+    
+    <div class="desktop-tab-content" id="desktop-compatibility-tab">
+        <div class="compatibility-section" style="width: 100%; max-width: 1200px; margin: 0 auto;">
+            <div class="panel-header">
+                ✅ MBS Code Compatibility Checker
+            </div>
+            <div style="padding: 20px;">
+                <div class="input-group">
+                    <label for="desktop-compatibility-codes">Enter MBS item numbers to check compatibility (comma-separated):</label>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" id="desktop-compatibility-codes" class="search-input" placeholder="e.g., 3,23,104" />
+                    <div class="button-row">
+                        <button class="search-btn" onclick="performDesktopCompatibilityCheck()">✅ Check Compatibility</button>
+                        <button class="clear-btn" onclick="clearDesktopCompatibilityCheck()">🗑️ Clear</button>
+                    </div>
+                </div>
+                
+                <div id="desktop-compatibility-error" class="error" style="display: none;"></div>
+                <div id="desktop-compatibility-notice" class="notice" style="display: none;"></div>
+                
+                <div id="desktop-compatibility-results" class="results"></div>
+            </div>
+        </div>
     </div>
     
     <!-- Mobile Tab Layout -->
@@ -529,6 +672,9 @@ ENHANCED_CHAT_UI = """
             </button>
             <button class="tab-button" onclick="switchTab('lookup')">
                 📋 MBS Code Lookup
+            </button>
+            <button class="tab-button" onclick="switchTab('compatibility')">
+                ✅ Compatibility Check
             </button>
         </div>
         
@@ -586,6 +732,27 @@ ENHANCED_CHAT_UI = """
                 </div>
             </div>
         </div>
+        
+        <div class="tab-content" id="compatibility-tab">
+            <div class="compatibility-section">
+                <div class="input-group">
+                    <label for="mobile-compatibility-codes">Enter MBS item numbers to check compatibility (comma-separated):</label>
+                </div>
+                
+                <div class="search-container">
+                    <input type="text" id="mobile-compatibility-codes" class="search-input" placeholder="e.g., 3,23,104" />
+                    <div class="button-row">
+                        <button class="search-btn" onclick="performMobileCompatibilityCheck()">✅ Check Compatibility</button>
+                        <button class="clear-btn" onclick="clearMobileCompatibilityCheck()">🗑️ Clear</button>
+                    </div>
+                </div>
+                
+                <div id="mobile-compatibility-error" class="error" style="display: none;"></div>
+                <div id="mobile-compatibility-notice" class="notice" style="display: none;"></div>
+                
+                <div id="mobile-compatibility-results" class="results"></div>
+            </div>
+        </div>
     </div>
     
     <script>
@@ -636,6 +803,13 @@ ENHANCED_CHAT_UI = """
             document.getElementById('codes').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     performCodeSearch();
+                }
+            });
+            
+            // Desktop compatibility input Enter key
+            document.getElementById('desktop-compatibility-codes').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performDesktopCompatibilityCheck();
                 }
             });
         }
@@ -1187,6 +1361,13 @@ ENHANCED_CHAT_UI = """
                     performMobileCodeSearch();
                 }
             });
+            
+            // Mobile compatibility input Enter key
+            document.getElementById('mobile-compatibility-codes').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performMobileCompatibilityCheck();
+                }
+            });
         }
         
         function switchTab(tabName) {
@@ -1197,6 +1378,16 @@ ENHANCED_CHAT_UI = """
             // Add active class to selected tab and button
             document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
             document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+        
+        function switchDesktopTab(tabName) {
+            // Remove active class from all desktop tabs and content
+            document.querySelectorAll('.desktop-tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.desktop-tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected tab and content
+            document.querySelector(`[onclick="switchDesktopTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`desktop-${tabName}-tab`).classList.add('active');
         }
         
         async function sendMobileMessage() {
@@ -1616,6 +1807,212 @@ ENHANCED_CHAT_UI = """
             const maxHeight = window.innerHeight * 0.25; // 25% of viewport height
             chatInput.style.height = Math.min(chatInput.scrollHeight, maxHeight) + 'px';
             chatInput.style.padding = '14px 6px';
+        }
+        
+        // Mobile Compatibility Checker Functions
+        async function performMobileCompatibilityCheck() {
+            const codesInput = document.getElementById('mobile-compatibility-codes').value.trim();
+            if (!codesInput) {
+                showError('mobile-compatibility-error', 'Please enter one or more MBS item numbers.');
+                return;
+            }
+            
+            const codes = codesInput.split(',').map(c => c.trim()).filter(c => c);
+            if (codes.length === 0) {
+                showError('mobile-compatibility-error', 'Please enter valid MBS item numbers.');
+                return;
+            }
+            
+            showLoading('mobile-compatibility-notice', 'Checking compatibility...');
+            hideMessages(['mobile-compatibility-error']);
+            
+            try {
+                const response = await fetch('/api/compatibility/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codes: codes })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Compatibility check failed');
+                }
+                
+                displayMobileCompatibilityResult(data);
+                hideLoading('mobile-compatibility-notice');
+                
+            } catch (error) {
+                showError('mobile-compatibility-error', 'Compatibility check failed: ' + error.message);
+                hideLoading('mobile-compatibility-notice');
+            }
+        }
+        
+        function displayMobileCompatibilityResult(result) {
+            const container = document.getElementById('mobile-compatibility-results');
+            
+            const decisionClass = result.decision === 'YAY' ? 'yay' : 'nay';
+            const decisionEmoji = result.decision === 'YAY' ? '✅' : '❌';
+            
+            let html = `
+                <div class="compatibility-result ${decisionClass}">
+                    <div class="decision">${decisionEmoji} ${result.decision}</div>
+                    <div class="reason">${result.reason}</div>
+            `;
+            
+            if (result.details) {
+                html += '<div class="details">';
+                
+                if (result.details.invalid_codes && result.details.invalid_codes.length > 0) {
+                    html += '<h4>Invalid Codes:</h4><ul>';
+                    result.details.invalid_codes.forEach(code => {
+                        html += `<li>${code}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.violations && result.details.violations.length > 0) {
+                    html += '<h4>Violations:</h4><ul>';
+                    result.details.violations.forEach(violation => {
+                        if (violation.code1 && violation.code2) {
+                            html += `<li>${violation.code1} and ${violation.code2}: ${violation.detail || violation.type}</li>`;
+                        } else if (violation.code) {
+                            html += `<li>Code ${violation.code}: ${violation.limit || 'Duplicate violation'} (submitted ${violation.count} times)</li>`;
+                        }
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.missing_dependencies && result.details.missing_dependencies.length > 0) {
+                    html += '<h4>Missing Dependencies:</h4><ul>';
+                    result.details.missing_dependencies.forEach(dep => {
+                        html += `<li>Code ${dep.code} requires ${dep.required_code}: ${dep.detail || 'Prerequisite missing'}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.solo_codes && result.details.solo_codes.length > 0) {
+                    html += '<h4>Solo-Only Codes:</h4><ul>';
+                    result.details.solo_codes.forEach(code => {
+                        html += `<li>Code ${code} must be billed alone</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function clearMobileCompatibilityCheck() {
+            document.getElementById('mobile-compatibility-codes').value = '';
+            document.getElementById('mobile-compatibility-results').innerHTML = '';
+            hideMessages(['mobile-compatibility-error', 'mobile-compatibility-notice']);
+        }
+        
+        // Desktop Compatibility Checker Functions
+        async function performDesktopCompatibilityCheck() {
+            const codesInput = document.getElementById('desktop-compatibility-codes').value.trim();
+            if (!codesInput) {
+                showError('desktop-compatibility-error', 'Please enter one or more MBS item numbers.');
+                return;
+            }
+            
+            const codes = codesInput.split(',').map(c => c.trim()).filter(c => c);
+            if (codes.length === 0) {
+                showError('desktop-compatibility-error', 'Please enter valid MBS item numbers.');
+                return;
+            }
+            
+            showLoading('desktop-compatibility-notice', 'Checking compatibility...');
+            hideMessages(['desktop-compatibility-error']);
+            
+            try {
+                const response = await fetch('/api/compatibility/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ codes: codes })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Compatibility check failed');
+                }
+                
+                displayDesktopCompatibilityResult(data);
+                hideLoading('desktop-compatibility-notice');
+                
+            } catch (error) {
+                showError('desktop-compatibility-error', 'Compatibility check failed: ' + error.message);
+                hideLoading('desktop-compatibility-notice');
+            }
+        }
+        
+        function displayDesktopCompatibilityResult(result) {
+            const container = document.getElementById('desktop-compatibility-results');
+            
+            const decisionClass = result.decision === 'YAY' ? 'yay' : 'nay';
+            const decisionEmoji = result.decision === 'YAY' ? '✅' : '❌';
+            
+            let html = `
+                <div class="compatibility-result ${decisionClass}">
+                    <div class="decision">${decisionEmoji} ${result.decision}</div>
+                    <div class="reason">${result.reason}</div>
+            `;
+            
+            if (result.details) {
+                html += '<div class="details">';
+                
+                if (result.details.invalid_codes && result.details.invalid_codes.length > 0) {
+                    html += '<h4>Invalid Codes:</h4><ul>';
+                    result.details.invalid_codes.forEach(code => {
+                        html += `<li>${code}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.violations && result.details.violations.length > 0) {
+                    html += '<h4>Violations:</h4><ul>';
+                    result.details.violations.forEach(violation => {
+                        if (violation.code1 && violation.code2) {
+                            html += `<li>${violation.code1} and ${violation.code2}: ${violation.detail || violation.type}</li>`;
+                        } else if (violation.code) {
+                            html += `<li>Code ${violation.code}: ${violation.limit || 'Duplicate violation'} (submitted ${violation.count} times)</li>`;
+                        }
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.missing_dependencies && result.details.missing_dependencies.length > 0) {
+                    html += '<h4>Missing Dependencies:</h4><ul>';
+                    result.details.missing_dependencies.forEach(dep => {
+                        html += `<li>Code ${dep.code} requires ${dep.required_code}: ${dep.detail || 'Prerequisite missing'}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (result.details.solo_codes && result.details.solo_codes.length > 0) {
+                    html += '<h4>Solo-Only Codes:</h4><ul>';
+                    result.details.solo_codes.forEach(code => {
+                        html += `<li>Code ${code} must be billed alone</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+        
+        function clearDesktopCompatibilityCheck() {
+            document.getElementById('desktop-compatibility-codes').value = '';
+            document.getElementById('desktop-compatibility-results').innerHTML = '';
+            hideMessages(['desktop-compatibility-error', 'desktop-compatibility-notice']);
         }
     </script>
 </body>

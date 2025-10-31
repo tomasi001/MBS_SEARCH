@@ -1,0 +1,1198 @@
+[
+  {
+    "test_id": 1,
+    "category": "P1",
+    "name": "Single invalid code",
+    "codes": [
+      "X999"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 2,
+    "category": "P1",
+    "name": "Multiple invalid codes - test 1",
+    "codes": [
+      "X999",
+      "INVALID"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 3,
+    "category": "P1",
+    "name": "Multiple invalid codes - test 2",
+    "codes": [
+      "INVALID",
+      "99999"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 4,
+    "category": "P1",
+    "name": "Multiple invalid codes - test 3",
+    "codes": [
+      "99999",
+      "ABCD"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 5,
+    "category": "P1",
+    "name": "Multiple invalid codes - test 4",
+    "codes": [
+      "ABCD",
+      "Z9999"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 6,
+    "category": "P1",
+    "name": "Multiple invalid codes - test 5",
+    "codes": [
+      "Z9999",
+      "X999"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 7,
+    "category": "P1",
+    "name": "Invalid code mixed with valid code",
+    "codes": [
+      "X999",
+      "3"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 8,
+    "category": "P1",
+    "name": "Empty codes array",
+    "codes": [],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 9,
+    "category": "P1",
+    "name": "Whitespace-only codes",
+    "codes": [
+      "   ",
+      "  ",
+      ""
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 10,
+    "category": "P1",
+    "name": "Invalid numeric code 999999",
+    "codes": [
+      "999999"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 11,
+    "category": "P1",
+    "name": "Invalid numeric code 1000000",
+    "codes": [
+      "1000000"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 12,
+    "category": "P1",
+    "name": "Invalid numeric code 1000001",
+    "codes": [
+      "1000001"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 13,
+    "category": "P1",
+    "name": "Invalid numeric code 1000002",
+    "codes": [
+      "1000002"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 14,
+    "category": "P1",
+    "name": "Invalid numeric code 1000003",
+    "codes": [
+      "1000003"
+    ],
+    "expected": "NAY",
+    "expected_check": "P1",
+    "difficulty": "edge_case"
+  },
+  {
+    "test_id": 15,
+    "category": "C1",
+    "name": "Group conflict - A1 (3 and 4)",
+    "codes": [
+      "3",
+      "4"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A1"
+  },
+  {
+    "test_id": 16,
+    "category": "C1",
+    "name": "Group conflict - A10 (10905 and 10907)",
+    "codes": [
+      "10905",
+      "10907"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A10"
+  },
+  {
+    "test_id": 17,
+    "category": "C1",
+    "name": "Group conflict - A11 (585 and 588)",
+    "codes": [
+      "585",
+      "588"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A11"
+  },
+  {
+    "test_id": 18,
+    "category": "C1",
+    "name": "Group conflict - A12 (385 and 386)",
+    "codes": [
+      "385",
+      "386"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A12"
+  },
+  {
+    "test_id": 19,
+    "category": "C1",
+    "name": "Group conflict - A13 (410 and 411)",
+    "codes": [
+      "410",
+      "411"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A13"
+  },
+  {
+    "test_id": 20,
+    "category": "C1",
+    "name": "Group conflict - A14 (695 and 699)",
+    "codes": [
+      "695",
+      "699"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A14"
+  },
+  {
+    "test_id": 21,
+    "category": "C1",
+    "name": "Group conflict - A15 (729 and 731)",
+    "codes": [
+      "729",
+      "731"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A15"
+  },
+  {
+    "test_id": 22,
+    "category": "C1",
+    "name": "Group conflict - A17 (900 and 903)",
+    "codes": [
+      "900",
+      "903"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A17"
+  },
+  {
+    "test_id": 23,
+    "category": "C1",
+    "name": "Group conflict - A2 (52 and 53)",
+    "codes": [
+      "52",
+      "53"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A2"
+  },
+  {
+    "test_id": 24,
+    "category": "C1",
+    "name": "Group conflict - A20 (2700 and 2701)",
+    "codes": [
+      "2700",
+      "2701"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate",
+    "expected_reason_contains": "Group A20"
+  },
+  {
+    "test_id": 25,
+    "category": "C1",
+    "name": "Group conflict - multiple codes in A1",
+    "codes": [
+      "3",
+      "4",
+      "23"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 26,
+    "category": "C1",
+    "name": "Group conflict - multiple codes in A10",
+    "codes": [
+      "10905",
+      "10907",
+      "10910"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 27,
+    "category": "C1",
+    "name": "Group conflict - multiple codes in A11",
+    "codes": [
+      "585",
+      "588",
+      "591"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 28,
+    "category": "C1",
+    "name": "Group conflict - multiple codes in A12",
+    "codes": [
+      "385",
+      "386",
+      "387"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 29,
+    "category": "C1",
+    "name": "Group conflict - multiple codes in A13",
+    "codes": [
+      "410",
+      "411",
+      "412"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 30,
+    "category": "C1",
+    "name": "Direct exclusion (104 excludes 106)",
+    "codes": [
+      "104",
+      "106"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 31,
+    "category": "C1",
+    "name": "Direct exclusion (104 excludes 109)",
+    "codes": [
+      "104",
+      "109"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 32,
+    "category": "C1",
+    "name": "Direct exclusion (104 excludes 125)",
+    "codes": [
+      "104",
+      "125"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 33,
+    "category": "C1",
+    "name": "Direct exclusion (104 excludes 16401)",
+    "codes": [
+      "104",
+      "16401"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 34,
+    "category": "C1",
+    "name": "Direct exclusion (105 excludes 126)",
+    "codes": [
+      "105",
+      "126"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 35,
+    "category": "C1",
+    "name": "Direct exclusion (105 excludes 16404)",
+    "codes": [
+      "105",
+      "16404"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 36,
+    "category": "C1",
+    "name": "Direct exclusion (106 excludes 104)",
+    "codes": [
+      "106",
+      "104"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 37,
+    "category": "C1",
+    "name": "Direct exclusion (106 excludes 109)",
+    "codes": [
+      "106",
+      "109"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 38,
+    "category": "C1",
+    "name": "Direct exclusion (106 excludes 10801)",
+    "codes": [
+      "106",
+      "10801"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 39,
+    "category": "C1",
+    "name": "Direct exclusion (10809 excludes 10806)",
+    "codes": [
+      "10809",
+      "10806"
+    ],
+    "expected": "NAY",
+    "expected_check": "C1",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 40,
+    "category": "C2",
+    "name": "Missing prerequisite (127 requires 45)",
+    "codes": [
+      "127"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 41,
+    "category": "C2",
+    "name": "Missing prerequisite (129 requires 45)",
+    "codes": [
+      "129"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 42,
+    "category": "C2",
+    "name": "Missing prerequisite (132 requires 2)",
+    "codes": [
+      "132"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "2"
+  },
+  {
+    "test_id": 43,
+    "category": "C2",
+    "name": "Missing prerequisite (133 requires 20)",
+    "codes": [
+      "133"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "20"
+  },
+  {
+    "test_id": 44,
+    "category": "C2",
+    "name": "Missing prerequisite (133 requires 2)",
+    "codes": [
+      "133"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "2"
+  },
+  {
+    "test_id": 45,
+    "category": "C2",
+    "name": "Missing prerequisite (135 requires 45)",
+    "codes": [
+      "135"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 46,
+    "category": "C2",
+    "name": "Missing prerequisite (137 requires 45)",
+    "codes": [
+      "137"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 47,
+    "category": "C2",
+    "name": "Missing prerequisite (289 requires 45)",
+    "codes": [
+      "289"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 48,
+    "category": "C2",
+    "name": "Missing prerequisite (289 requires 2)",
+    "codes": [
+      "289"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "2"
+  },
+  {
+    "test_id": 49,
+    "category": "C2",
+    "name": "Missing prerequisite (296 requires 45)",
+    "codes": [
+      "296"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 50,
+    "category": "C2",
+    "name": "Missing prerequisite (297 requires 45)",
+    "codes": [
+      "297"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 51,
+    "category": "C2",
+    "name": "Missing prerequisite (299 requires 45)",
+    "codes": [
+      "299"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "45"
+  },
+  {
+    "test_id": 52,
+    "category": "C2",
+    "name": "Missing prerequisite (300 requires 15)",
+    "codes": [
+      "300"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "15"
+  },
+  {
+    "test_id": 53,
+    "category": "C2",
+    "name": "Missing prerequisite (302 requires 15)",
+    "codes": [
+      "302"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "15"
+  },
+  {
+    "test_id": 54,
+    "category": "C2",
+    "name": "Missing prerequisite (304 requires 30)",
+    "codes": [
+      "304"
+    ],
+    "expected": "NAY",
+    "expected_check": "C2",
+    "difficulty": "moderate",
+    "expected_reason_contains": "30"
+  },
+  {
+    "test_id": 55,
+    "category": "C3",
+    "name": "Solo-only code alone (36)",
+    "codes": [
+      "36"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 56,
+    "category": "C3",
+    "name": "Solo-only code alone (44)",
+    "codes": [
+      "44"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 57,
+    "category": "C3",
+    "name": "Solo-only code alone (5040)",
+    "codes": [
+      "5040"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 58,
+    "category": "C3",
+    "name": "Solo-only code alone (5060)",
+    "codes": [
+      "5060"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 59,
+    "category": "C3",
+    "name": "Solo-only code alone (90043)",
+    "codes": [
+      "90043"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 60,
+    "category": "C3",
+    "name": "Solo-only code with other (36 with 104)",
+    "codes": [
+      "36",
+      "104"
+    ],
+    "expected": "NAY",
+    "expected_check": "C3",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 61,
+    "category": "C3",
+    "name": "Solo-only code with other (44 with 105)",
+    "codes": [
+      "44",
+      "105"
+    ],
+    "expected": "NAY",
+    "expected_check": "C3",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 62,
+    "category": "C3",
+    "name": "Solo-only code with other (5040 with 106)",
+    "codes": [
+      "5040",
+      "106"
+    ],
+    "expected": "NAY",
+    "expected_check": "C3",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 63,
+    "category": "C3",
+    "name": "Solo-only code with other (5060 with 107)",
+    "codes": [
+      "5060",
+      "107"
+    ],
+    "expected": "NAY",
+    "expected_check": "C3",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 64,
+    "category": "C3",
+    "name": "Solo-only code with other (90043 with 108)",
+    "codes": [
+      "90043",
+      "108"
+    ],
+    "expected": "NAY",
+    "expected_check": "C3",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 65,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (11729 x2)",
+    "codes": [
+      "11729",
+      "11729"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 66,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (11730 x2)",
+    "codes": [
+      "11730",
+      "11730"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 67,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (11732 x2)",
+    "codes": [
+      "11732",
+      "11732"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 68,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12203 x2)",
+    "codes": [
+      "12203",
+      "12203"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 69,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12204 x2)",
+    "codes": [
+      "12204",
+      "12204"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 70,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12205 x2)",
+    "codes": [
+      "12205",
+      "12205"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 71,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12207 x2)",
+    "codes": [
+      "12207",
+      "12207"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 72,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12208 x2)",
+    "codes": [
+      "12208",
+      "12208"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 73,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12210 x2)",
+    "codes": [
+      "12210",
+      "12210"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 74,
+    "category": "C4",
+    "name": "Duplicate same_occasion code (12213 x2)",
+    "codes": [
+      "12213",
+      "12213"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 75,
+    "category": "C4",
+    "name": "Multiple duplicates (11729 x3)",
+    "codes": [
+      "11729",
+      "11729",
+      "11729"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "advanced"
+  },
+  {
+    "test_id": 76,
+    "category": "C4",
+    "name": "Multiple duplicates (11730 x3)",
+    "codes": [
+      "11730",
+      "11730",
+      "11730"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "advanced"
+  },
+  {
+    "test_id": 77,
+    "category": "C4",
+    "name": "Multiple duplicates (11732 x3)",
+    "codes": [
+      "11732",
+      "11732",
+      "11732"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "advanced"
+  },
+  {
+    "test_id": 78,
+    "category": "C4",
+    "name": "Multiple duplicates (12203 x3)",
+    "codes": [
+      "12203",
+      "12203",
+      "12203"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "advanced"
+  },
+  {
+    "test_id": 79,
+    "category": "C4",
+    "name": "Multiple duplicates (12204 x3)",
+    "codes": [
+      "12204",
+      "12204",
+      "12204"
+    ],
+    "expected": "NAY",
+    "expected_check": "C4",
+    "difficulty": "advanced"
+  },
+  {
+    "test_id": 80,
+    "category": "YAY",
+    "name": "Single valid code (104)",
+    "codes": [
+      "104"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 81,
+    "category": "YAY",
+    "name": "Single valid code (105)",
+    "codes": [
+      "105"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 82,
+    "category": "YAY",
+    "name": "Single valid code (106)",
+    "codes": [
+      "106"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 83,
+    "category": "YAY",
+    "name": "Single valid code (107)",
+    "codes": [
+      "107"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 84,
+    "category": "YAY",
+    "name": "Single valid code (108)",
+    "codes": [
+      "108"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 85,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10801)",
+    "codes": [
+      "104",
+      "10801"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 86,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10802)",
+    "codes": [
+      "104",
+      "10802"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 87,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10803)",
+    "codes": [
+      "104",
+      "10803"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 88,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10804)",
+    "codes": [
+      "104",
+      "10804"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 89,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10805)",
+    "codes": [
+      "104",
+      "10805"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 90,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10806)",
+    "codes": [
+      "104",
+      "10806"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 91,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10807)",
+    "codes": [
+      "104",
+      "10807"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 92,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10808)",
+    "codes": [
+      "104",
+      "10808"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 93,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10809)",
+    "codes": [
+      "104",
+      "10809"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 94,
+    "category": "YAY",
+    "name": "Compatible codes (104 and 10816)",
+    "codes": [
+      "104",
+      "10816"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "moderate"
+  },
+  {
+    "test_id": 95,
+    "category": "YAY",
+    "name": "Valid code 1 (10952)",
+    "codes": [
+      "10952"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 96,
+    "category": "YAY",
+    "name": "Valid code 2 (10953)",
+    "codes": [
+      "10953"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 97,
+    "category": "YAY",
+    "name": "Valid code 3 (10954)",
+    "codes": [
+      "10954"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 98,
+    "category": "YAY",
+    "name": "Valid code 4 (10955)",
+    "codes": [
+      "10955"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 99,
+    "category": "YAY",
+    "name": "Valid code 5 (10956)",
+    "codes": [
+      "10956"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  },
+  {
+    "test_id": 100,
+    "category": "YAY",
+    "name": "Valid code 6 (10957)",
+    "codes": [
+      "10957"
+    ],
+    "expected": "YAY",
+    "expected_check": null,
+    "difficulty": "basic"
+  }
+]

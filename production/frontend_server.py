@@ -24,6 +24,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import settings
 from templates.enhanced_chat_ui import ENHANCED_CHAT_UI
 from src.mbs_clarity.db import fetch_item_aggregate
+from src.mbs_clarity.compatibility_checker import check_mbs_compatibility
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -239,6 +240,49 @@ async def get_items(codes: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/api/compatibility/check")
+async def check_compatibility(request: Dict[str, Any]):
+    """
+    Check compatibility between MBS codes.
+
+    This endpoint is completely isolated and does not modify any existing functionality.
+
+    Request body:
+    {
+        "codes": ["23", "36", "104"]  // List of MBS item numbers
+    }
+
+    Response:
+    {
+        "decision": "YAY" or "NAY",
+        "reason": "Human-readable explanation",
+        "failed_check": "P1|C1|C2|C3|C4" or null,
+        "details": {...}  // Additional details about the failure
+    }
+    """
+    try:
+        codes = request.get("codes", [])
+
+        if not codes:
+            raise HTTPException(status_code=400, detail="No codes provided")
+
+        if not isinstance(codes, list):
+            raise HTTPException(status_code=400, detail="Codes must be a list")
+
+        # Perform compatibility check
+        result = check_mbs_compatibility(codes)
+
+        logger.info(f"Compatibility check for codes {codes}: {result['decision']}")
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error checking compatibility: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 if __name__ == "__main__":
     # Use PORT environment variable for Render compatibility
     port = int(os.environ.get("PORT", 8000))
@@ -249,5 +293,3 @@ if __name__ == "__main__":
     logger.info(f"Vector Server URL: {VECTOR_SERVER_URL}")
 
     uvicorn.run(app, host=host, port=port, log_level="info")
-
-
