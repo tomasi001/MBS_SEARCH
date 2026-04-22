@@ -7,7 +7,7 @@ Instead of using heavy local sentence-transformers models that exceed the 512MB 
 ## Benefits of Gemini Embeddings
 
 - **No Memory Issues**: No local models to load (saves 400MB+ memory)
-- **High Quality**: Gemini's `text-embedding-004` model provides excellent semantic search
+- **High Quality**: Gemini's `gemini-embedding-001` model provides excellent semantic search
 - **Scalable**: API-based, no local resource constraints
 - **Cost Effective**: Pay per use, not per server
 - **Fast**: Optimized for retrieval tasks with `RETRIEVAL_QUERY` task type
@@ -47,14 +47,14 @@ Health Check Path: /health
 ```bash
 GEMINI_API_KEY=your_gemini_api_key
 USE_GEMINI_EMBEDDINGS=true
-GEMINI_EMBEDDING_MODEL=models/text-embedding-004
+GEMINI_EMBEDDING_MODEL=models/gemini-embedding-001
 CHROMA_PERSIST_DIRECTORY=./chroma_db
 DEBUG=false
 ```
 
 ## Gemini Embedding Configuration
 
-### Model: `text-embedding-004`
+### Model: `gemini-embedding-001`
 
 - **Dimensions**: 768 (optimized for storage and performance)
 - **Task Type**: `RETRIEVAL_QUERY` (optimized for search queries)
@@ -76,7 +76,7 @@ DEBUG=false
 def generate_embeddings(texts: List[str]) -> List[List[float]]:
     """Generate embeddings using Gemini API with normalization."""
     result = gemini_client.models.embed_content(
-        model="models/text-embedding-004",
+        model="models/gemini-embedding-001",
         contents=texts,
         config=types.EmbedContentConfig(
             task_type="RETRIEVAL_QUERY",
@@ -153,7 +153,7 @@ curl https://mbs-vector-server.onrender.com/health
   "chromadb_available": true,
   "gemini_embeddings_available": true,
   "collection_initialized": true,
-  "embedding_model": "models/text-embedding-004"
+  "embedding_model": "models/gemini-embedding-001"
 }
 ```
 

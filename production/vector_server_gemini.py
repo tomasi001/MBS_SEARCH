@@ -3,11 +3,12 @@ Vector Search Server for MBS AI Assistant Production Deployment.
 
 This server handles:
 - ChromaDB vector database operations
-- Gemini API embeddings (no local models)
+- Gemini API embeddings (gemini-embedding-001) for query-time search
 - Semantic search functionality
 - Vector database management
 
-This version uses Gemini embeddings to avoid memory issues on free tier.
+Documents are pre-embedded offline. This server only embeds search queries
+at runtime using the Gemini free tier API.
 """
 
 import logging
@@ -29,12 +30,10 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Configuration (self-contained)
+# Configuration
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-USE_GEMINI_EMBEDDINGS = os.getenv("USE_GEMINI_EMBEDDINGS", "true").lower() == "true"
-GEMINI_EMBEDDING_MODEL = os.getenv(
-    "GEMINI_EMBEDDING_MODEL", "models/text-embedding-004"
-)
+EMBEDDING_MODEL = "models/gemini-embedding-001"
+EMBEDDING_DIM = 768
 CHROMA_PERSIST_DIRECTORY = os.getenv("CHROMA_PERSIST_DIRECTORY", "./chroma_db")
 DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
@@ -51,12 +50,12 @@ except ImportError:
 # Global service instances
 vector_client = None
 collection = None
-gemini_client = None
+gemini_available = False
 
 # Create FastAPI app
 app = FastAPI(
     title="MBS AI Assistant - Vector Server",
-    description="Vector database and semantic search server using Gemini embeddings",
+    description="Vector database and semantic search server",
     version="1.0.0",
 )
 
@@ -73,18 +72,18 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize vector services on startup."""
-    global vector_client, collection, gemini_client
+    global vector_client, collection, gemini_available
 
     logger.info("Initializing vector services...")
 
     try:
-        # Initialize Gemini client
-        if GEMINI_API_KEY and USE_GEMINI_EMBEDDINGS:
+        # Initialize Gemini for query-time embeddings
+        if GEMINI_API_KEY:
             genai.configure(api_key=GEMINI_API_KEY)
-            gemini_client = genai
-            logger.info("Gemini client initialized successfully")
+            gemini_available = True
+            logger.info(f"Gemini configured for query embeddings: {EMBEDDING_MODEL}")
         else:
-            logger.warning("Gemini API key not provided or embeddings disabled")
+            logger.warning("GEMINI_API_KEY not set - query embeddings unavailable")
 
         # Initialize ChromaDB client
         if not CHROMADB_AVAILABLE:
@@ -102,7 +101,7 @@ async def startup_event():
         collection_name = "mbs_codes"
         try:
             collection = vector_client.get_collection(name=collection_name)
-            logger.info(f"Loaded existing collection: {collection_name}")
+            logger.info(f"Loaded existing collection: {collection_name} ({collection.count()} docs)")
         except Exception:
             collection = vector_client.create_collection(
                 name=collection_name,
@@ -114,7 +113,6 @@ async def startup_event():
 
     except Exception as e:
         logger.error(f"Failed to initialize vector services: {e}")
-        # Continue without vector services
 
 
 @app.middleware("http")
@@ -131,51 +129,22 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-def generate_embeddings(texts: List[str]) -> List[List[float]]:
-    """Generate embeddings using Gemini API."""
-    if not gemini_client:
-        raise Exception("Gemini client not initialized")
+def generate_query_embedding(text: str) -> List[float]:
+    """Generate embedding for a search query using Gemini API."""
+    if not gemini_available:
+        raise Exception("Gemini API not configured")
 
-    try:
-        # Process texts one at a time to ensure we get one embedding per text
-        embeddings = []
-        for text in texts:
-            result = genai.embed_content(
-                model=GEMINI_EMBEDDING_MODEL,
-                content=text,
-                task_type="RETRIEVAL_QUERY",
-                output_dimensionality=768,  # Smaller dimension to save space
-            )
-            
-            # Extract embedding and normalize it
-            if "embeddings" in result:
-                embedding_values = result["embeddings"][0]
-            elif "embedding" in result:
-                embedding_values = result["embedding"]
-            else:
-                # Try to get the first value that looks like an embedding
-                for key, value in result.items():
-                    if isinstance(value, list) and len(value) > 0:
-                        embedding_values = value[0] if isinstance(value[0], list) else value
-                        break
-                else:
-                    raise Exception(f"Could not find embedding in response: {result}")
-            
-            # Handle nested embedding structure
-            if isinstance(embedding_values, list) and len(embedding_values) > 0 and isinstance(embedding_values[0], list):
-                # If it's nested, flatten it
-                embedding_values = embedding_values[0]
-            
-            # Normalize the embedding
-            normed_embedding = np.array(embedding_values) / np.linalg.norm(embedding_values)
-            embeddings.append(normed_embedding.tolist())
-        
-        logger.info(f"Generated {len(embeddings)} embeddings using Gemini API")
-        return embeddings
+    result = genai.embed_content(
+        model=EMBEDDING_MODEL,
+        content=text,
+        task_type="RETRIEVAL_QUERY",
+        output_dimensionality=EMBEDDING_DIM,
+    )
 
-    except Exception as e:
-        logger.error(f"Error generating embeddings: {e}")
-        raise
+    raw = result["embedding"]
+    vec = np.array(raw, dtype=np.float32)
+    vec = vec / np.linalg.norm(vec)
+    return vec.tolist()
 
 
 @app.get("/health")
@@ -194,24 +163,22 @@ async def health_check():
         "message": "Vector server is running",
         "server": "vector",
         "chromadb_available": CHROMADB_AVAILABLE,
-        "gemini_embeddings_available": gemini_client is not None,
+        "gemini_embeddings_available": gemini_available,
         "collection_initialized": collection is not None,
-        "embedding_model": GEMINI_EMBEDDING_MODEL,
+        "embedding_model": EMBEDDING_MODEL,
         "stats": stats,
     }
 
 
 @app.post("/api/vector/search")
 async def vector_search(request: Dict[str, Any]):
-    """Perform vector search using Gemini embeddings."""
+    """Perform vector search."""
     try:
         if not collection:
             raise HTTPException(status_code=503, detail="Vector database not available")
 
-        if not gemini_client:
-            raise HTTPException(
-                status_code=503, detail="Gemini embeddings not available"
-            )
+        if not gemini_available:
+            raise HTTPException(status_code=503, detail="Gemini embeddings not available")
 
         query = request.get("query", "")
         n_results = request.get("n_results", 5)
@@ -222,16 +189,11 @@ async def vector_search(request: Dict[str, Any]):
 
         logger.info(f"Vector search: '{query}'")
 
-        # Generate query embedding using Gemini
         try:
-            query_embeddings = generate_embeddings([query])
-            query_embedding = query_embeddings[0]
-            logger.info("Generated query embedding using Gemini API")
+            query_embedding = generate_query_embedding(query)
         except Exception as e:
             logger.error(f"Failed to generate query embedding: {e}")
-            raise HTTPException(
-                status_code=500, detail=f"Failed to generate embedding: {e}"
-            )
+            raise HTTPException(status_code=500, detail=f"Failed to generate embedding: {e}")
 
         # Perform search
         where_clause = filters if filters else None
@@ -267,15 +229,13 @@ async def vector_search(request: Dict[str, Any]):
 
 @app.post("/api/vector/add")
 async def add_documents(request: Dict[str, Any]):
-    """Add documents to the vector database using Gemini embeddings."""
+    """Add documents to the vector database."""
     try:
         if not collection:
             raise HTTPException(status_code=503, detail="Vector database not available")
 
-        if not gemini_client:
-            raise HTTPException(
-                status_code=503, detail="Gemini embeddings not available"
-            )
+        if not gemini_available:
+            raise HTTPException(status_code=503, detail="Gemini embeddings not available")
 
         documents = request.get("documents", [])
         if not documents:
@@ -283,7 +243,6 @@ async def add_documents(request: Dict[str, Any]):
 
         logger.info(f"Adding {len(documents)} documents to vector database")
 
-        # Extract data
         ids = []
         texts = []
         metadatas = []
@@ -293,17 +252,12 @@ async def add_documents(request: Dict[str, Any]):
             texts.append(doc["text"])
             metadatas.append(doc["metadata"])
 
-        # Generate embeddings using Gemini
-        try:
-            embeddings = generate_embeddings(texts)
-            logger.info(f"Generated {len(embeddings)} embeddings using Gemini API")
-        except Exception as e:
-            logger.error(f"Failed to generate embeddings: {e}")
-            raise HTTPException(
-                status_code=500, detail=f"Failed to generate embeddings: {e}"
-            )
+        # Generate embeddings one at a time via Gemini
+        embeddings = []
+        for text in texts:
+            emb = generate_query_embedding(text)
+            embeddings.append(emb)
 
-        # Add to collection
         collection.add(
             ids=ids, embeddings=embeddings, documents=texts, metadatas=metadatas
         )
@@ -329,7 +283,7 @@ async def get_vector_stats():
         return {
             "total_documents": count,
             "collection_name": collection.name,
-            "embedding_model": GEMINI_EMBEDDING_MODEL,
+            "embedding_model": EMBEDDING_MODEL,
             "embedding_provider": "gemini",
         }
 
@@ -341,12 +295,11 @@ async def get_vector_stats():
 
 
 if __name__ == "__main__":
-    # Use PORT environment variable for Render compatibility
     port = int(os.environ.get("PORT", 8002))
-    host = "0.0.0.0"  # Required for Render
+    host = "0.0.0.0"
 
     logger.info(f"Starting Vector server on {host}:{port}")
     logger.info(f"ChromaDB available: {CHROMADB_AVAILABLE}")
-    logger.info(f"Gemini embeddings available: {gemini_client is not None}")
+    logger.info(f"Gemini available: {gemini_available}")
 
     uvicorn.run(app, host=host, port=port, log_level="info")

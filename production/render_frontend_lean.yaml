@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: mbs-frontend-server
+    name: mbs-search-frontend-server
     env: python
     plan: free
     rootDir: production/
@@ -19,9 +19,9 @@ services:
         - "*"
     envVars:
       - key: AI_SERVER_URL
-        value: "https://mbs-ai-server.onrender.com"
+        value: "https://mbs-search-ai-server.onrender.com"
       - key: VECTOR_SERVER_URL
-        value: "https://mbs-vector-server.onrender.com"
+        value: "https://mbs-search.onrender.com"
       - key: MBS_DB_PATH
         value: "mbs.db"
       - key: DEBUG

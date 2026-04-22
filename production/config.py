@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     GEMINI_API_KEY: str = Field(..., description="Google Gemini API key")
     GEMINI_MODEL_NAME: str = Field("gemini-2.5-flash", description="Gemini model name")
     GEMINI_EMBEDDING_MODEL: str = Field(
-        "models/embedding-001", description="Gemini embedding model"
+        "models/gemini-embedding-001", description="Gemini embedding model"
     )
 
     # Fallback Configuration

@@ -45,7 +45,7 @@
 - [ ] Create `config.py` with Settings class:
   - [ ] `GEMINI_API_KEY: str`
   - [ ] `GEMINI_MODEL_NAME: str = "gemini-2.5-flash"`
-  - [ ] `GEMINI_EMBEDDING_MODEL: str = "models/embedding-001"`
+  - [ ] `GEMINI_EMBEDDING_MODEL: str = "models/gemini-embedding-001"`
   - [ ] `CHROMA_PERSIST_DIRECTORY: str = "./chroma_db"`
   - [ ] `ENVIRONMENT: str = "development"`
   - [ ] `DEBUG: bool = True`
